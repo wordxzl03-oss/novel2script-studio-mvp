@@ -1,0 +1,131 @@
+title: 雨夜来信
+logline: 一名年轻刑警在雨夜收到旧案线索，被迫重新面对三年前的失踪案。
+metadata:
+  version: "0.1.0"
+  language: zh-CN
+  profile: short_drama
+
+characters:
+  - character_id: C001
+    name: 林砚
+    aliases: [砚哥, 林队]
+    role: protagonist
+    description: 年轻刑警，克制、敏锐，对三年前的旧案仍有执念。
+
+  - character_id: C002
+    name: 周南
+    aliases: [阿南]
+    role: supporting
+    description: 林砚的旧友，掌握失踪案的关键线索。
+
+  - character_id: C003
+    name: 陈叔
+    aliases: [老陈]
+    role: minor
+    description: 档案室管理员，曾经参与旧案资料整理。
+
+locations:
+  - location_id: L001
+    name: 巷口
+    aliases: [老街巷口]
+    description: 狭窄潮湿的老街入口，夜晚路灯昏暗。
+
+  - location_id: L002
+    name: 档案室
+    aliases: [市局档案室]
+    description: 堆满旧案卷宗的地下档案室。
+
+chapters:
+  - chapter_id: CH001
+    title: 第一章 雨夜来信
+    summary: 林砚在雨夜收到匿名信，信中提到三年前失踪案的遗漏证据。
+
+  - chapter_id: CH002
+    title: 第二章 旧案卷宗
+    summary: 林砚前往档案室重新查阅卷宗，发现关键证词被涂改。
+
+  - chapter_id: CH003
+    title: 第三章 巷口重逢
+    summary: 林砚在老街巷口见到周南，二人围绕匿名信爆发冲突。
+
+episodes:
+  - number: 1
+    title: 第一集 雨夜来信
+    target_duration_seconds: 110
+    hook:
+      type: reveal
+      description: 卷宗残页上的半个名字，正是林砚最信任的旧友。
+    paywall_point: false
+    scenes: [S001, S002, S003]
+
+scenes:
+  - scene_id: S001
+    title: 雨夜收到匿名信
+    source:
+      chapter: CH001
+      para_range: {start: 1, end: 6}
+      fidelity: condensed
+      quote: 雨水敲在窗沿上，林砚拆开那封没有署名的信。
+    heading:
+      int_ext: EXT
+      location_id: L001
+      time_of_day: night
+    characters: [C001]
+    objective: 林砚试图判断匿名信是否与三年前旧案有关。
+    conflict: 信中内容指向旧案漏洞，但缺少明确证据。
+    elements:
+      - {type: action, text: 林砚站在巷口路灯下，雨水顺着伞沿滴落，他反复阅读匿名信。}
+      - {type: dialogue, speaker_id: C001, line: 三年前的案子，为什么现在才有人提起？, mode: vo, emotion: 克制}
+      - {type: action, text: 他把信纸折好，放进证物袋。}
+      - {type: transition, text: CUT TO}
+    adaptation_log:
+      - change_type: compress
+        reason: 将原文中较长的心理描写压缩为可拍动作和一句画外音。
+
+  - scene_id: S002
+    title: 档案室发现涂改记录
+    source:
+      chapter: CH002
+      para_range: {start: 2, end: 9}
+      fidelity: condensed
+      quote: 卷宗第三页的证词被黑笔划去，只剩下半个名字。
+    heading:
+      int_ext: INT
+      location_id: L002
+      time_of_day: night
+    characters: [C001, C003]
+    objective: 林砚试图找到旧案证词被修改的痕迹。
+    conflict: 陈叔不愿承认档案曾被人动过。
+    elements:
+      - {type: action, text: 林砚翻开旧卷宗，停在第三页。}
+      - {type: dialogue, speaker_id: C001, line: 这页证词不是自然损坏，是后来被人划掉的。, emotion: 追问}
+      - {type: action, text: 陈叔把钥匙攥在手里，没有抬头。}
+      - {type: dialogue, speaker_id: C003, line: 档案室只管保存，不管旧账。, emotion: 回避}
+      - {type: sound, text: 头顶的日光灯闪了两下。}
+    adaptation_log:
+      - change_type: externalize
+        reason: 将原文中"林砚感到不安"的心理描写外化为翻阅卷宗和追问动作。
+
+  - scene_id: S003
+    title: 巷口对峙
+    source:
+      chapter: CH003
+      para_range: {start: 1, end: 8}
+      fidelity: faithful
+      quote: 周南站在巷口的阴影里，像是早就等在那里。
+    heading:
+      int_ext: EXT
+      location_id: L001
+      time_of_day: night
+    characters: [C001, C002]
+    objective: 林砚逼问周南是否知道匿名信的来源。
+    conflict: 周南试图回避旧案，但林砚已经发现他的称呼出现在卷宗残页中。
+    elements:
+      - {type: action, text: 周南退到路灯照不到的地方。}
+      - {type: action, text: 林砚把卷宗复印件递到他面前。}
+      - {type: dialogue, speaker_id: C001, line: 这半个名字，是你。, emotion: 压迫}
+      - {type: dialogue, speaker_id: C002, line: 你不该重新查这件事。, emotion: 警告}
+      - {type: title_card, text: 第一集 完}
+    adaptation_log:
+      - change_type: keep
+        reason: 保留原文核心冲突，并将叙述性铺垫压缩为两人对峙。
