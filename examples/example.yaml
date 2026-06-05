@@ -65,7 +65,7 @@ scenes:
       chapter: CH001
       para_range: {start: 1, end: 6}
       fidelity: condensed
-      quote: 雨水敲在窗沿上，林砚拆开那封没有署名的信。
+      quote: 信封是在半小时前送到值班室的。
     heading:
       int_ext: EXT
       location_id: L001
@@ -86,9 +86,9 @@ scenes:
     title: 档案室发现涂改记录
     source:
       chapter: CH002
-      para_range: {start: 2, end: 9}
+      para_range: {start: 1, end: 6}
       fidelity: condensed
-      quote: 卷宗第三页的证词被黑笔划去，只剩下半个名字。
+      quote: 证词栏里有一行字被黑笔划去，只剩下半个名字。
     heading:
       int_ext: INT
       location_id: L002
