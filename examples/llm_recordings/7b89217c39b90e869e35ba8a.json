@@ -1,0 +1,33 @@
+{
+  "request": {
+    "model": "deepseek-v4-flash",
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是小说改编流水线中的信息抽取器。从给定章节中抽取：\n1. characters：本章出场人物。name 使用最正式的称呼；aliases 列出文中出现过的其他称呼（绰号、昵称、职务称呼）。\n2. locations：事件发生的具体地点。\n3. summary：不超过 80 字的本章情节摘要。\n只输出 JSON，不要任何解释、不要 markdown 代码块。格式：\n{\"characters\":[{\"name\":\"\",\"aliases\":[],\"role\":\"protagonist|supporting|antagonist|minor\",\"description\":\"\"}],\"locations\":[{\"name\":\"\",\"aliases\":[],\"description\":\"\"}],\"summary\":\"\"}"
+      },
+      {
+        "role": "user",
+        "content": "《第1章 雨夜来信》\n\n雨从傍晚开始落下，老街巷口的路灯被水雾晕成一团。\n林砚把伞压低，发现门缝里夹着一只没有署名的信封。\n信纸上只有半行字：三年前的案子，不该就这么结束。"
+      }
+    ],
+    "temperature": 0.0
+  },
+  "response": {
+    "content": "{\"characters\":[{\"name\":\"林砚\",\"aliases\":[],\"role\":\"protagonist\",\"description\":\"收到匿名信，提及三年前的案子\"}],\"locations\":[{\"name\":\"老街巷口\",\"aliases\":[],\"description\":\"雨夜，路灯下，门缝中夹着匿名信\"}],\"summary\":\"雨夜，林砚在自家门缝发现匿名信，信上写着三年前的案子不该就此结束。\"}",
+    "usage": {
+      "prompt_tokens": 204,
+      "completion_tokens": 189,
+      "total_tokens": 393,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 99
+      },
+      "prompt_cache_hit_tokens": 128,
+      "prompt_cache_miss_tokens": 76
+    }
+  },
+  "recorded_at": "2026-06-07T21:31:57"
+}

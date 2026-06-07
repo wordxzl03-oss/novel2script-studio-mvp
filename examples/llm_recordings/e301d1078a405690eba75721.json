@@ -1,0 +1,33 @@
+{
+  "request": {
+    "model": "deepseek-v4-flash",
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是小说改编流水线中的信息抽取器。从给定章节中抽取：\n1. characters：本章出场人物。name 使用最正式的称呼；aliases 列出文中出现过的其他称呼（绰号、昵称、职务称呼）。\n2. locations：事件发生的具体地点。\n3. summary：不超过 80 字的本章情节摘要。\n只输出 JSON，不要任何解释、不要 markdown 代码块。格式：\n{\"characters\":[{\"name\":\"\",\"aliases\":[],\"role\":\"protagonist|supporting|antagonist|minor\",\"description\":\"\"}],\"locations\":[{\"name\":\"\",\"aliases\":[],\"description\":\"\"}],\"summary\":\"\"}"
+      },
+      {
+        "role": "user",
+        "content": "《第2章 旧案卷宗》\n\n档案室的灯坏了一半，只剩最里面一排冷白色的光。\n陈叔把钥匙放在桌上，没有看林砚。\n林砚翻开旧案卷宗，发现一页证词被黑笔划去了半个名字。"
+      }
+    ],
+    "temperature": 0.0
+  },
+  "response": {
+    "content": "{\n  \"characters\": [\n    {\n      \"name\": \"林砚\",\n      \"aliases\": [],\n      \"role\": \"protagonist\",\n      \"description\": \"\"\n    },\n    {\n      \"name\": \"陈叔\",\n      \"aliases\": [],\n      \"role\": \"supporting\",\n      \"description\": \"\"\n    }\n  ],\n  \"locations\": [\n    {\n      \"name\": \"档案室\",\n      \"aliases\": [],\n      \"description\": \"灯坏了一半，只剩最里面一排冷白色的光\"\n    }\n  ],\n  \"summary\": \"林砚在档案室翻阅旧案卷宗，发现一页证词被黑笔划去了半个名字。\"\n}",
+    "usage": {
+      "prompt_tokens": 201,
+      "completion_tokens": 400,
+      "total_tokens": 601,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 255
+      },
+      "prompt_cache_hit_tokens": 128,
+      "prompt_cache_miss_tokens": 73
+    }
+  },
+  "recorded_at": "2026-06-07T21:32:03"
+}

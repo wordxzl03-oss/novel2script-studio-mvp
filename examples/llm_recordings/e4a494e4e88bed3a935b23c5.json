@@ -1,0 +1,33 @@
+{
+  "request": {
+    "model": "deepseek-v4-flash",
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是小说改编流水线中的剧本场景生成器。\n\n你的任务：\n1. 只根据给定章节文本生成本章剧本场景；\n2. 角色必须引用给定角色注册表中的 character_id；\n3. 地点必须引用给定地点注册表中的 location_id；\n4. 每个场景必须包含 source.chapter 与 source.para_range；\n5. para_range 使用章节段落的 1-based 编号；\n6. elements 必须是有序列表，保留动作、对白、声音、转场等顺序；\n7. 不要编造未注册角色 id、未注册地点 id；\n8. 不要输出 estimated_seconds，该字段由代码计算；\n9. 只输出 JSON，不要 markdown，不要解释。\n\n输出格式：\n{\n  \"scenes\": [\n    {\n      \"scene_id\": \"S001\",\n      \"title\": \"\",\n      \"source\": {\n        \"chapter\": \"CH001\",\n        \"para_range\": {\"start\": 1, \"end\": 2},\n        \"fidelity\": \"faithful\",\n        \"quote\": \"\"\n      },\n      \"heading\": {\n        \"int_ext\": \"INT|EXT|INT_EXT\",\n        \"location_id\": \"L001\",\n        \"time_of_day\": \"day|night|dawn|dusk|unknown\"\n      },\n      \"characters\": [\"C001\"],\n      \"objective\": \"\",\n      \"conflict\": \"\",\n      \"elements\": [\n        {\"type\": \"action\", \"text\": \"\"},\n        {\"type\": \"dialogue\", \"speaker_id\": \"C001\", \"line\": \"\", \"mode\": \"normal\"}\n      ],\n      \"adaptation_log\": [\n        {\"change_type\": \"keep\", \"reason\": \"\"}\n      ]\n    }\n  ]\n}\n"
+      },
+      {
+        "role": "user",
+        "content": "{\n  \"chapter\": {\n    \"chapter_id\": \"CH003\",\n    \"title\": \"第3章 巷口重逢\",\n    \"paragraphs\": [\n      {\n        \"para_no\": 1,\n        \"text\": \"巷口的路灯亮得很迟，雨停以后，地面还反着碎光。\"\n      },\n      {\n        \"para_no\": 2,\n        \"text\": \"周南站在阴影里，像是早就知道林砚会来。\"\n      },\n      {\n        \"para_no\": 3,\n        \"text\": \"林砚举起那页复印件，问：被划掉的名字，是你，对吗？\"\n      }\n    ]\n  },\n  \"registry\": {\n    \"characters\": [\n      {\n        \"character_id\": \"C001\",\n        \"name\": \"林砚\",\n        \"aliases\": [],\n        \"role\": \"protagonist\",\n        \"description\": \"手持复印件质问周南被划掉的名字是否是他\"\n      },\n      {\n        \"character_id\": \"C002\",\n        \"name\": \"陈叔\",\n        \"aliases\": [],\n        \"role\": \"supporting\",\n        \"description\": null\n      },\n      {\n        \"character_id\": \"C003\",\n        \"name\": \"周南\",\n        \"aliases\": [],\n        \"role\": \"supporting\",\n        \"description\": \"站在巷口阴影中等待林砚，被质问\"\n      }\n    ],\n    \"locations\": [\n      {\n        \"location_id\": \"L001\",\n        \"name\": \"老街巷口\",\n        \"aliases\": [],\n        \"description\": \"雨夜，路灯下，门缝中夹着匿名信\"\n      },\n      {\n        \"location_id\": \"L002\",\n        \"name\": \"档案室\",\n        \"aliases\": [],\n        \"description\": \"灯坏了一半，只剩最里面一排冷白色的光\"\n      },\n      {\n        \"location_id\": \"L003\",\n        \"name\": \"巷口\",\n        \"aliases\": [],\n        \"description\": \"雨后路灯迟亮，地面反着碎光的巷口\"\n      }\n    ],\n    \"chapter_summary\": \"雨夜巷口，林砚与周南重逢，林砚举起被划掉名字的复印件质问周南是否就是那个人。\"\n  },\n  \"requirements\": {\n    \"scene_source_chapter\": \"CH003\",\n    \"scene_id_rule\": \"Use S001, S002... globally if known; otherwise any unique Sxxx id is acceptable.\",\n    \"do_not_output_estimated_seconds\": true\n  }\n}"
+      }
+    ],
+    "temperature": 0.0
+  },
+  "response": {
+    "content": "{\n  \"scenes\": [\n    {\n      \"scene_id\": \"S001\",\n      \"title\": \"巷口重逢\",\n      \"source\": {\n        \"chapter\": \"CH003\",\n        \"para_range\": {\"start\": 1, \"end\": 3},\n        \"fidelity\": \"faithful\",\n        \"quote\": \"林砚举起那页复印件，问：被划掉的名字，是你，对吗？\"\n      },\n      \"heading\": {\n        \"int_ext\": \"EXT\",\n        \"location_id\": \"L003\",\n        \"time_of_day\": \"night\"\n      },\n      \"characters\": [\"C001\", \"C003\"],\n      \"objective\": \"林砚质问周南被划掉的名字是否就是他\",\n      \"conflict\": \"林砚怀疑周南隐瞒了真相\",\n      \"elements\": [\n        {\"type\": \"action\", \"text\": \"巷口的路灯亮得很迟，雨停以后，地面还反着碎光。\"},\n        {\"type\": \"action\", \"text\": \"周南站在阴影里，像是早就知道林砚会来。\"},\n        {\"type\": \"action\", \"text\": \"林砚举起那页复印件。\"},\n        {\"type\": \"dialogue\", \"speaker_id\": \"C001\", \"line\": \"被划掉的名字，是你，对吗？\", \"mode\": \"normal\"}\n      ],\n      \"adaptation_log\": [\n        {\"change_type\": \"keep\", \"reason\": \"根据原文逐段忠实地转化为剧本元素，未删改或添加情节。\"}\n      ]\n    }\n  ]\n}",
+    "usage": {
+      "prompt_tokens": 912,
+      "completion_tokens": 653,
+      "total_tokens": 1565,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 318
+      },
+      "prompt_cache_hit_tokens": 512,
+      "prompt_cache_miss_tokens": 400
+    }
+  },
+  "recorded_at": "2026-06-07T21:32:34"
+}
