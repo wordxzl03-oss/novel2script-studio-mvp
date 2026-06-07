@@ -10,7 +10,8 @@ from app.llm.client import LLMClient
 from app.pipeline.chapter_splitter import split_novel_text
 from app.pipeline.global_scan import run_global_scan
 from app.pipeline.scene_generator import generate_screenplay
-
+import os
+from pathlib import Path
 
 router = APIRouter()
 
@@ -36,11 +37,23 @@ class GenerateResponse(BaseModel):
 
 
 def get_llm_client() -> LLMClient:
-    """Dependency factory.
+    """Create LLM client from environment variables.
 
-    Tests can override this dependency so API tests never require a real API key.
-    Runtime config is read by LLMClient from environment variables.
+    DEMO_MODE=1 forces replay mode so evaluators can run the demo without API keys.
     """
+    repo_root = Path(__file__).resolve().parents[3]
+    default_recordings_dir = repo_root / "examples" / "llm_recordings"
+
+    demo_mode = os.getenv("DEMO_MODE", "0").lower() in {"1", "true", "yes", "on"}
+    llm_mode = os.getenv("LLM_MODE", "live").lower()
+    recordings_dir = Path(os.getenv("LLM_RECORDINGS_DIR", str(default_recordings_dir)))
+
+    if demo_mode:
+        return LLMClient(mode="replay", recordings_dir=recordings_dir)
+
+    if llm_mode in {"record", "replay"}:
+        return LLMClient(mode=llm_mode, recordings_dir=recordings_dir)
+
     return LLMClient()
 
 

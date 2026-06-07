@@ -1,0 +1,33 @@
+{
+  "request": {
+    "model": "deepseek-v4-flash",
+    "messages": [
+      {
+        "role": "system",
+        "content": "你是小说改编流水线中的信息抽取器。从给定章节中抽取：\n1. characters：本章出场人物。name 使用最正式的称呼；aliases 列出文中出现过的其他称呼（绰号、昵称、职务称呼）。\n2. locations：事件发生的具体地点。\n3. summary：不超过 80 字的本章情节摘要。\n只输出 JSON，不要任何解释、不要 markdown 代码块。格式：\n{\"characters\":[{\"name\":\"\",\"aliases\":[],\"role\":\"protagonist|supporting|antagonist|minor\",\"description\":\"\"}],\"locations\":[{\"name\":\"\",\"aliases\":[],\"description\":\"\"}],\"summary\":\"\"}"
+      },
+      {
+        "role": "user",
+        "content": "《第3章 巷口重逢》\n\n巷口的路灯亮得很迟，雨停以后，地面还反着碎光。\n周南站在阴影里，像是早就知道林砚会来。\n林砚举起那页复印件，问：被划掉的名字，是你，对吗？"
+      }
+    ],
+    "temperature": 0.0
+  },
+  "response": {
+    "content": "{\"characters\":[{\"name\":\"林砚\",\"aliases\":[],\"role\":\"protagonist\",\"description\":\"手持复印件质问周南被划掉的名字是否是他\"},{\"name\":\"周南\",\"aliases\":[],\"role\":\"supporting\",\"description\":\"站在巷口阴影中等待林砚，被质问\"}],\"locations\":[{\"name\":\"巷口\",\"aliases\":[],\"description\":\"雨后路灯迟亮，地面反着碎光的巷口\"}],\"summary\":\"雨夜巷口，林砚与周南重逢，林砚举起被划掉名字的复印件质问周南是否就是那个人。\"}",
+    "usage": {
+      "prompt_tokens": 204,
+      "completion_tokens": 555,
+      "total_tokens": 759,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 429
+      },
+      "prompt_cache_hit_tokens": 128,
+      "prompt_cache_miss_tokens": 76
+    }
+  },
+  "recorded_at": "2026-06-07T21:32:10"
+}

@@ -43,10 +43,19 @@ def test_request_key_excludes_model_for_portable_replay(tmp_path):
     assert a.request_key(messages, 0.0) == b.request_key(messages, 0.0)
 
 
-def test_live_mode_without_config_raises():
-    client = LLMClient(base_url="", model="", mode="live")
+def test_live_mode_without_config_raises(monkeypatch):
+    monkeypatch.delenv("LLM_BASE_URL", raising=False)
+    monkeypatch.delenv("LLM_MODEL", raising=False)
+    monkeypatch.delenv("LLM_API_KEY", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("OPENAI_MODEL", raising=False)
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.delenv("QWEN_API_KEY", raising=False)
+
+    client = LLMClient(base_url="", model="", api_key="", mode="live")
+
     with pytest.raises(LLMError):
-        client.chat([{"role": "user", "content": "hi"}])
+        client.chat([{"role": "user", "content": "hello"}])
 
 
 def test_malformed_api_response_raises(tmp_path):
