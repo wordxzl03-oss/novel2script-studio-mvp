@@ -1,3 +1,9 @@
+"""Legacy screenplay schema.
+
+V1 short-drama project models live in backend/app/schema/short_drama.py.
+Do not add new V1 objects to this file.
+"""
+
 from __future__ import annotations
 
 from typing import Annotated, Literal, Union
