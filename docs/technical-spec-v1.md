@@ -236,6 +236,13 @@ PR-006 实现映射:
 
 `BoundedAgent` 至少能校验 step 是否属于 `allowed_steps`。W0 不实现业务状态机。
 
+PR-007 实现映射:
+
+- `backend/app/agents/base.py` 只提供 bounded agent 基础类型。
+- `AgentStep.task_run` 可关联 `backend/app/ai/task.py` 的 `AITaskRun`。
+- `BoundedAgent.validate_step_order()` 只校验 step 是否属于 `allowed_steps`。
+- W0 不创建任何业务 agent, `export_agent.py` 也不得存在。
+
 ### 5.4 `LLMClient` 接线
 
 现有 `backend/app/llm/client.py` 已支持 live / record / replay。W0 不需要重写它, 但要通过 `AITask` 统一接入。
