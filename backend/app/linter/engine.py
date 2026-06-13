@@ -327,6 +327,20 @@ def _lint_short_drama_episodes(
                 )
             )
 
+        episode_scene_ids = _as_list(episode.get("scenes"))
+        if not episode_scene_ids:
+            message = "short_drama legacy episode must use scenes as a list of scene ids."
+            if "scene_ids" in episode:
+                message += " Found scene_ids, but legacy Episode declares scenes."
+            findings.append(
+                _finding(
+                    "E006",
+                    path=f"episodes[{episode_index}].scenes",
+                    message=message,
+                    suggestion="Use episodes[].scenes, matching app.schema.models.Episode.",
+                )
+            )
+
         estimated_seconds = _episode_estimated_seconds(episode, scene_by_id)
         if estimated_seconds is not None and estimated_seconds > seconds_limit:
             findings.append(
@@ -507,7 +521,7 @@ def _episode_estimated_seconds(
         except (TypeError, ValueError):
             return None
 
-    scene_ids = _as_list(episode.get("scene_ids"))
+    scene_ids = _as_list(episode.get("scenes"))
     if not scene_ids:
         return None
 

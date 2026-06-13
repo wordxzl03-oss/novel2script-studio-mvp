@@ -188,7 +188,7 @@ def test_e006_short_drama_requires_episode_hook():
     data["episodes"] = [
         {
             "episode_id": "EP001",
-            "scene_ids": ["S001"],
+            "scenes": ["S001"],
             "hook": "",
             "estimated_seconds": 90,
         }
@@ -205,7 +205,7 @@ def test_e007_short_drama_episode_duration_limit():
     data["episodes"] = [
         {
             "episode_id": "EP001",
-            "scene_ids": ["S001"],
+            "scenes": ["S001"],
             "hook": "林砚发现新线索。",
             "estimated_seconds": 121,
         }
