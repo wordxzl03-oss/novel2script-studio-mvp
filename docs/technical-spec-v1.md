@@ -83,6 +83,26 @@ V1 优先实现可审计检索:
 
 向量相似度和 embedding 检索只保留扩展接口, 不列为 W0 或 V1 必做项。V1 的验收重点是反黑箱的确定性证据链。
 
+W1 的 `backend/app/rag/retriever.py` 落地以下运行契约:
+
+- `retrieve_deterministic(store, source_ranges)` 接收 `SourceRange` 列表, 按
+  `chapter_id/start_para/end_para` 通过 `EvidenceStore` 精确取回原文 chunk,
+  并按检索输入顺序去重返回。
+- `Episode.source_ranges` 的元素是 `SourceLink`, 实际范围在
+  `SourceLink.source_range` 内; `source_ranges_of(episode)` 只抽取非空
+  `source_range`, 跳过 `invented_for_adaptation`。
+- `retrieve_by_tags(store, filters)` 支持 `character_ids`, `location_ids`,
+  `event_tags`, `keywords`。同一字段内多值取并集, 不同字段之间取交集。
+  `keywords` 只做确定性子串匹配, 不做模糊匹配或向量相似度。
+- `build_retrieval_context(...)` 合并确定性检索与标签检索结果, 组装
+  `RetrievalContext`。缺省的 `filters`, `locked_items`,
+  `profile_context`, `project_memory` 使用空 dict/list, 不使用 `None`。
+- 检索结果为空时抛 `EmptyRetrievalError`, 不返回空 `RetrievalContext`,
+  也不制造占位 chunk 绕过 `RetrievalContext.evidence_chunks` 的
+  `min_length=1` 约束。
+- `retrieve_semantic(...)` 仅保留接口桩, 调用即 `NotImplementedError`。
+  W1 不实现 embedding、相似度检索、向量库, 也不调用 LLM。
+
 ### 3.3 引用一致性
 
 AI 输出中的 `source_basis` 必须来自本次 `RetrievalContext.evidence_chunks`。如果输出引用了未检索到的原文段落, 代码必须打回。
