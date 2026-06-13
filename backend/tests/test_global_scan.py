@@ -106,7 +106,7 @@ def test_scan_chapter_retries_once_on_bad_json():
         return fake_openai_response(next(responses))
 
     client = LLMClient(base_url="https://example.com/v1", model="m",
-                       mode="live", post_fn=post_fn)
+                       api_key="k", mode="live", post_fn=post_fn)
     parsed = scan_chapter(client, chapters[0])
 
     assert calls["count"] == 2
@@ -120,7 +120,7 @@ def test_scan_chapter_strips_markdown_code_fence():
     fenced = "```json\n" + json.dumps(
         {"characters": [], "locations": [], "summary": "ok"}, ensure_ascii=False
     ) + "\n```"
-    client = LLMClient(base_url="https://example.com/v1", model="m", mode="live",
+    client = LLMClient(base_url="https://example.com/v1", model="m", api_key="k", mode="live",
                        post_fn=lambda u, p, h: fake_openai_response(fenced))
     parsed = scan_chapter(client, chapters[0])
     assert parsed["summary"] == "ok"
@@ -159,7 +159,7 @@ def test_run_global_scan_end_to_end():
         (ROOT / "examples" / "sample_novel.txt").read_text(encoding="utf-8")
     )
     client = LLMClient(base_url="https://example.com/v1", model="m",
-                       mode="live", post_fn=canned_post_fn)
+                       api_key="k", mode="live", post_fn=canned_post_fn)
     result = run_global_scan(client, chapters)
 
     # 林砚 / 林队 / 砚哥跨章归一为同一角色
@@ -185,7 +185,7 @@ def test_record_mode_creates_replayable_recordings(tmp_path):
         (ROOT / "examples" / "sample_novel.txt").read_text(encoding="utf-8")
     )
     recorder = LLMClient(base_url="https://example.com/v1", model="m",
-                         mode="record", recordings_dir=tmp_path,
+                         api_key="k", mode="record", recordings_dir=tmp_path,
                          post_fn=canned_post_fn)
     first = run_global_scan(recorder, chapters)
 

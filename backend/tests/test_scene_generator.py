@@ -228,6 +228,7 @@ def test_generate_screenplay_end_to_end_with_schema_and_linter():
     client = LLMClient(
         base_url="https://example.com/v1",
         model="m",
+        api_key="k",
         mode="live",
         post_fn=scene_post_fn,
     )
@@ -271,6 +272,7 @@ def test_chapter_scene_generation_retries_once_on_bad_json():
     client = LLMClient(
         base_url="https://example.com/v1",
         model="m",
+        api_key="k",
         mode="live",
         post_fn=post_fn,
     )
@@ -293,6 +295,7 @@ def test_chapter_scene_generation_strips_markdown_code_fence():
     client = LLMClient(
         base_url="https://example.com/v1",
         model="m",
+        api_key="k",
         mode="live",
         post_fn=lambda url, payload, headers: fake_openai_response(fenced),
     )
@@ -328,6 +331,7 @@ def test_schema_validation_failure_triggers_repair_once():
     client = LLMClient(
         base_url="https://example.com/v1",
         model="m",
+        api_key="k",
         mode="live",
         post_fn=post_fn,
     )
@@ -355,6 +359,7 @@ def test_schema_validation_failure_without_repair_raises():
     client = LLMClient(
         base_url="https://example.com/v1",
         model="m",
+        api_key="k",
         mode="live",
         post_fn=lambda url, payload, headers: fake_openai_response(
             json.dumps(invalid, ensure_ascii=False)
@@ -377,6 +382,7 @@ def test_record_then_replay_scene_generation(tmp_path):
     recorder = LLMClient(
         base_url="https://example.com/v1",
         model="m",
+        api_key="k",
         mode="record",
         recordings_dir=tmp_path,
         post_fn=lambda url, payload, headers: fake_openai_response(

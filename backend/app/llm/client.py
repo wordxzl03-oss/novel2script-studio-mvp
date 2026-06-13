@@ -54,9 +54,11 @@ class LLMClient:
         timeout: float = 120.0,
         post_fn: Callable[[str, dict, dict], dict] | None = None,
     ) -> None:
-        self.base_url = (base_url or os.getenv("LLM_BASE_URL", "")).rstrip("/")
-        self.model = model or os.getenv("LLM_MODEL", "")
-        self.api_key = api_key or os.getenv("LLM_API_KEY", "")
+        self.base_url = (base_url if base_url is not None else os.getenv("LLM_BASE_URL", "")).rstrip(
+            "/"
+        )
+        self.model = model if model is not None else os.getenv("LLM_MODEL", "")
+        self.api_key = api_key if api_key is not None else os.getenv("LLM_API_KEY", "")
 
         if mode is None:
             mode = "replay" if os.getenv("DEMO_MODE") == "1" else os.getenv("LLM_MODE", "live")
@@ -95,7 +97,6 @@ class LLMClient:
                     f"请先在配置好 API Key 的环境中用 LLM_MODE=record 跑一遍流水线生成录制。"
                 )
             data = json.loads(path.read_text(encoding="utf-8"))
-            self.usage.add(data.get("response", {}).get("usage"))
             return data["response"]["content"]
 
         content, usage = self._call_api(messages, temperature)
@@ -123,7 +124,23 @@ class LLMClient:
 
     # ----------------------------------------------------------- internal
 
+    def _missing_live_config(self) -> list[str]:
+        missing = []
+        if not self.api_key:
+            missing.append("LLM_API_KEY")
+        if not self.base_url:
+            missing.append("LLM_BASE_URL")
+        if not self.model:
+            missing.append("LLM_MODEL")
+        return missing
+
     def _call_api(self, messages: list[dict], temperature: float) -> tuple[str, dict | None]:
+        missing = self._missing_live_config()
+        if missing:
+            raise LLMError(
+                "Missing server-side LLM configuration: " + ", ".join(missing)
+            )
+
         if not self.base_url or not self.model:
             raise LLMError(
                 "缺少 LLM_BASE_URL / LLM_MODEL 配置（live / record 模式需要直连 API；"
