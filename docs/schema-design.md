@@ -109,6 +109,28 @@ Chunk rules:
 - LLM-dependent fields stay empty in W1: `event_tags=[]`, `conflict_type=None`,
   and `emotional_tone=None`.
 
+### Evidence Store And Indexes
+
+`EvidenceStore` is a standalone in-memory object for W1 evidence queries. It is
+not part of `ShortDramaProject` state and is not attached to a backend
+`ProjectStore`.
+
+Store rules:
+
+- `add_chunks` accepts `EvidenceChunk` objects and indexes them by `chunk_id`.
+- `get` returns an exact chunk id match or `None`.
+- `get_by_range(chapter_id, para_range)` only returns novel chunks whose
+  paragraph ranges overlap the requested inclusive range.
+- Range results are sorted deterministically by `chapter_id`, paragraph start,
+  paragraph end, and `chunk_id`.
+- `list_by_tag` supports character, location, and event tag filters through
+  deterministic inverted indexes.
+- `to_json` persists only chunks. `from_json` validates chunks and rebuilds
+  indexes from those chunks.
+
+W1 does not introduce a database, ORM, vector store, embedding index,
+`RetrievalContext` assembly, or LLM-driven evidence tagging.
+
 ## 5. Episode Contract
 
 Each V1 `Episode` requires the short-drama core fields:
