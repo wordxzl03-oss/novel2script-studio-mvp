@@ -158,6 +158,30 @@ not model output fields. PR-104 does not implement citation consistency,
 pipeline mutation, status logging, fuzzy matching, similarity scoring, or LLM
 judgment.
 
+### Source Validation Step
+
+PR-108 adds a runtime validation step without changing the V1 schema fields.
+
+`backend/app/validation/pipeline_step.py` exposes
+`run_source_validation_step(output, retrieval_context, store)`. The function:
+
+- deep-copies the output before applying code-owned repairs;
+- validates every discovered `SourceLink` with `validate_source_link`;
+- checks every discovered `EvidenceMeta` with `check_citation_consistency`;
+- aggregates all findings into a `ValidationReport`;
+- returns `SourceValidationStepResult` with the updated output, validation
+  report, and recorded changes.
+
+`SourceValidationChange` records the path, action, before value, after value,
+and originating finding code for each code-made repair. These records are step
+results only in W1. They are not `AdaptationLogEntry` records and are not
+persisted into `Episode.adaptation_log` until a later project-state layer owns
+that write.
+
+PR-108 remains pure runtime validation: it does not add a business agent, fixed
+pipeline module, LLM call, database, vector store, API endpoint, UI highlight
+rendering, or new model-output field.
+
 ## 5. Episode Contract
 
 Each V1 `Episode` requires the short-drama core fields:

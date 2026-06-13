@@ -131,6 +131,24 @@ W1 的 `backend/app/validation/citation_check.py` 将该规则落为纯校验函
 - 本校验不调用 LLM、不补证据、不放宽为"有引用就行",也不强制所有新增内容
   必须伪造引用。
 
+W1 的 `backend/app/validation/pipeline_step.py` 将三类溯源校验和引用一致性
+组合成独立步骤:
+
+- `run_source_validation_step(output, retrieval_context, store)` 作为普通函数暴露,
+  供后续业务 `AITask.validate_output()` 调用;W1 不新增固定管线模块。
+- 步骤遍历输出中的 `SourceLink`, 调用 `validate_source_link(...)`;同时遍历
+  `EvidenceMeta`, 调用 `check_citation_consistency(...)`。
+- 对 `downgrade_to_source_based`, `clear_quote`, `mark_unverified` 这类代码建议动作,
+  步骤会在拷贝后的输出上应用, 并把每次变更记录到 `SourceValidationStepResult.changes`。
+- W1 的自动变更只记录在 step result 中, 不写入 `Episode.adaptation_log`;
+  adaptation_log 挂载点留到后续项目状态层实现。
+- 若仍存在 error 级 finding, 返回的 `ValidationReport.passed=false`。
+
+A4 任务输出的顺序约定为: retrieval -> generation -> parse/schema ->
+source validation step including citation consistency -> later linter stages。
+W2 及之后的业务 `AITask` 必须在 `validate_output()` 中接入该步骤, 再进入 W3
+短剧 Linter 或项目状态写入。
+
 ## 4. Bounded Agent 架构
 
 Bounded Agent 是受控任务编排, 不是自由行动 Agent。每个 Agent 只能负责一个明确业务任务, 并受固定输入、固定输出 schema、工具白名单、校验器、修复策略和日志约束。
