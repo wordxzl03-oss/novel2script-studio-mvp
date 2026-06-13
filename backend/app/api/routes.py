@@ -3,9 +3,10 @@ from __future__ import annotations
 from dataclasses import asdict
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
+from app.core.rate_limit import InMemoryRateLimiter, RateLimitExceeded
 from app.llm.client import LLMClient
 from app.pipeline.chapter_splitter import split_novel_text
 from app.pipeline.global_scan import run_global_scan
@@ -14,6 +15,7 @@ import os
 from pathlib import Path
 
 router = APIRouter()
+_rate_limiter: InMemoryRateLimiter | None = None
 
 
 class GenerateRequest(BaseModel):
@@ -51,10 +53,51 @@ def get_llm_client() -> LLMClient:
     if demo_mode:
         return LLMClient(mode="replay", recordings_dir=recordings_dir)
 
-    if llm_mode in {"record", "replay"}:
+    if llm_mode == "replay":
         return LLMClient(mode=llm_mode, recordings_dir=recordings_dir)
 
-    return LLMClient()
+    if llm_mode not in {"live", "record"}:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "error": "llm_configuration_error",
+                "message": "Unsupported LLM_MODE. Use live, record, or replay.",
+                "missing": [],
+            },
+        )
+
+    config = {
+        "LLM_API_KEY": os.getenv("LLM_API_KEY", "").strip(),
+        "LLM_BASE_URL": os.getenv("LLM_BASE_URL", "").strip(),
+        "LLM_MODEL": os.getenv("LLM_MODEL", "").strip(),
+    }
+    missing = [name for name, value in config.items() if not value]
+    if missing:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "error": "llm_configuration_error",
+                "message": "Missing server-side LLM configuration.",
+                "missing": missing,
+            },
+        )
+
+    return LLMClient(
+        base_url=config["LLM_BASE_URL"],
+        model=config["LLM_MODEL"],
+        api_key=config["LLM_API_KEY"],
+        mode=llm_mode,
+        recordings_dir=recordings_dir,
+    )
+
+
+def get_rate_limiter() -> InMemoryRateLimiter:
+    global _rate_limiter
+
+    limit_per_day = _rate_limit_per_day()
+    if _rate_limiter is None or _rate_limiter.limit_per_day != limit_per_day:
+        _rate_limiter = InMemoryRateLimiter(limit_per_day=limit_per_day)
+    return _rate_limiter
 
 
 @router.get("/health")
@@ -65,7 +108,9 @@ def health_check() -> dict[str, str]:
 @router.post("/generate", response_model=GenerateResponse)
 def generate_screenplay_api(
     request: GenerateRequest,
+    raw_request: Request,
     client: LLMClient = Depends(get_llm_client),
+    rate_limiter: InMemoryRateLimiter = Depends(get_rate_limiter),
 ) -> GenerateResponse:
     """Run the full backend pipeline.
 
@@ -77,6 +122,11 @@ def generate_screenplay_api(
     -> linter
     -> response payload
     """
+    try:
+        rate_limiter.check(_rate_limit_subject(raw_request), llm_mode=client.mode)
+    except RateLimitExceeded as exc:
+        raise HTTPException(status_code=429, detail=exc.to_detail()) from exc
+
     try:
         chapters = split_novel_text(request.novel_text)
 
@@ -121,3 +171,20 @@ def _to_jsonable(value: Any) -> dict[str, Any]:
     if isinstance(value, dict):
         return value
     raise TypeError(f"Cannot serialize value: {value!r}")
+
+
+def _rate_limit_per_day() -> int:
+    raw_value = os.getenv("RATE_LIMIT_PER_DAY", "100").strip()
+    try:
+        return int(raw_value)
+    except ValueError:
+        return 100
+
+
+def _rate_limit_subject(request: Request) -> str:
+    session_id = request.headers.get("x-session-id", "").strip()
+    if session_id:
+        return session_id
+    if request.client is not None and request.client.host:
+        return request.client.host
+    return "unknown"

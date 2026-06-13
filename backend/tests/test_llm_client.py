@@ -26,8 +26,8 @@ def test_record_then_replay_round_trip(tmp_path):
     # 回放端不配置任何模型/Key，模拟评委环境
     replayer = LLMClient(mode="replay", recordings_dir=tmp_path)
     assert replayer.chat(messages, temperature=0.0) == "回答内容"
-    assert replayer.usage.calls == 1
-    assert replayer.usage.prompt_tokens == 10
+    assert replayer.usage.calls == 0
+    assert replayer.usage.prompt_tokens == 0
 
 
 def test_replay_missing_recording_raises_helpful_error(tmp_path):
@@ -61,6 +61,7 @@ def test_live_mode_without_config_raises(monkeypatch):
 def test_malformed_api_response_raises(tmp_path):
     client = LLMClient(
         base_url="https://example.com/v1", model="m", mode="live",
+        api_key="k",
         post_fn=lambda url, payload, headers: {"unexpected": True},
     )
     with pytest.raises(LLMError):

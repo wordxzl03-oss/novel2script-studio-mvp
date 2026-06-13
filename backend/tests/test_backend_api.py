@@ -256,6 +256,7 @@ def make_test_client() -> TestClient:
     fake_client = LLMClient(
         base_url="https://example.com/v1",
         model="mock-model",
+        api_key="test-key",
         mode="live",
         post_fn=api_post_fn,
     )
