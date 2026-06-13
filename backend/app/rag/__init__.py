@@ -9,6 +9,7 @@ from app.rag.retriever import (
     retrieve_semantic,
     source_ranges_of,
 )
+from app.rag.source_binding import bind_source_ranges, resolve_episode_sources
 from app.rag.types import EvidenceChunk, EvidenceMetadata, RetrievalContext
 
 __all__ = [
@@ -20,8 +21,10 @@ __all__ = [
     "RetrievalContext",
     "build_retrieval_context",
     "build_inverted_index",
+    "bind_source_ranges",
     "chunk_novel",
     "normalize_source_text",
+    "resolve_episode_sources",
     "retrieve_by_tags",
     "retrieve_deterministic",
     "retrieve_semantic",

@@ -178,6 +178,20 @@ Episode-level optional support objects include:
 - `forks`
 - `adaptation_log`
 
+PR-106 makes `Episode.source_ranges` operational for F8 source binding:
+
+- `bind_source_ranges(episode, source_links, store)` writes an ordered,
+  non-empty `list[SourceLink]` into `episode.source_ranges`.
+- Any `SourceLink.source_range` that is present must fully resolve through
+  `EvidenceStore` by `chapter_id` and paragraph range. Unresolvable ranges
+  raise a clear error instead of creating a dangling binding.
+- `invented_for_adaptation` links with `source_range=None` are preserved in
+  order and resolve to `resolved_text=None`.
+- `resolve_episode_sources(episode, store)` returns ordered segment data:
+  `source_link`, `source_range`, `resolved_text`, and `source_type`.
+- F8 stores only backend binding and resolution data. It does not change the
+  nested Episode schema, render F14 UI, call an LLM, or add persistence.
+
 ## 6. Scene, Beat, And Element
 
 `Scene` contains source links, optional visual notes, and nested beats.
