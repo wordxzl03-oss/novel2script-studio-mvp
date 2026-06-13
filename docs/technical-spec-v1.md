@@ -117,6 +117,20 @@ AI 输出中的 `source_basis` 必须来自本次 `RetrievalContext.evidence_chu
 
 这条规则约束的是"凡引用必须真实", 不是"所有新增内容都必须伪造引用"。
 
+W1 的 `backend/app/validation/citation_check.py` 将该规则落为纯校验函数:
+
+- `check_citation_consistency(evidence, context)` 检查
+  `EvidenceMeta.source_basis` 中每个 `SourceLink` 是否能被本次
+  `RetrievalContext.evidence_chunks` 覆盖。
+- 覆盖判定基于 `SourceLink.source_range` 与检索 chunk 的
+  `EvidenceMetadata.chapter_id/para_range`;引用段落必须落在本次检索证据内。
+- 未命中本次检索结果的引用返回 error finding, code 为
+  `citation_not_in_retrieval`。
+- `source_basis=[]` 不强制失败;当 `EvidenceMeta.is_inferred=true` 时表示合法
+  短剧新增。若 `source_basis=[]` 且 `is_inferred=false`, 返回 error finding。
+- 本校验不调用 LLM、不补证据、不放宽为"有引用就行",也不强制所有新增内容
+  必须伪造引用。
+
 ## 4. Bounded Agent 架构
 
 Bounded Agent 是受控任务编排, 不是自由行动 Agent。每个 Agent 只能负责一个明确业务任务, 并受固定输入、固定输出 schema、工具白名单、校验器、修复策略和日志约束。
