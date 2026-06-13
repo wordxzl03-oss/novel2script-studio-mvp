@@ -1,0 +1,13 @@
+profile_id: female_revenge_vertical
+display_name: 女频逆袭
+episode_duration_sec: [60, 180]
+opening_hook_required: true
+cliffhanger_required: true
+dialogue_density: high
+scene_count_per_episode: [1, 4]
+preferred_conflict_types:
+  - humiliation
+  - reversal
+  - identity_reveal
+risk_rules:
+  - avoid_excessive_abuse
