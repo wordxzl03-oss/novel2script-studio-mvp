@@ -91,6 +91,24 @@ All V1 models inherit strict extra-field rejection through `StrictModel`.
 For `invented_for_adaptation`, `EvidenceMeta.source_basis` may be empty and
 `EvidenceMeta.is_inferred` may be `true`.
 
+### Evidence Chunks
+
+`chunk_novel` turns `SourceNovel.chapters[].paragraphs` into paragraph-level
+`EvidenceChunk` objects with `source_type="novel"`.
+
+Chunk rules:
+
+- `chunk_id` is deterministic: `{chapter_id}:p{start}-{end}`.
+- Paragraph ranges are 1-based and stored as `EvidenceMetadata.para_range`.
+- `source_ref` points back to the chunk range with a `source_based` `SourceLink`.
+- `source_hash` hashes normalized chunk text. Normalization trims only leading
+  and trailing whitespace, including full-width spaces and line breaks. It does
+  not remove punctuation, fold case, or collapse internal whitespace.
+- `character_ids` and `location_ids` are filled by deterministic string matches
+  against registry names and aliases.
+- LLM-dependent fields stay empty in W1: `event_tags=[]`, `conflict_type=None`,
+  and `emotional_tone=None`.
+
 ## 5. Episode Contract
 
 Each V1 `Episode` requires the short-drama core fields:
