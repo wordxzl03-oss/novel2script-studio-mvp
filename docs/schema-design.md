@@ -9,6 +9,9 @@
 existing pipeline. It keeps `Screenplay`, legacy `Episode`, legacy `Scene`, and
 the current `/api/generate` contract.
 
+legacy `Episode.scenes` stores scene id strings that reference top-level
+`Screenplay.scenes`. legacy `Episode` does not use `scene_ids`.
+
 V1 short-drama objects live in `backend/app/schema/short_drama.py`.
 
 Rules:
@@ -33,6 +36,8 @@ ShortDramaProject
 
 `Episode` owns nested `Scene` objects directly. V1 does not use `scene_ids` as
 the primary episode structure.
+
+V1 `Episode.scenes` stores nested `Scene` objects. V1 `Episode` does not use `scene_ids`.
 
 ## 3. Required Core Models
 
