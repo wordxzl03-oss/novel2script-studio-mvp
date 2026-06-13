@@ -131,6 +131,33 @@ Store rules:
 W1 does not introduce a database, ORM, vector store, embedding index,
 `RetrievalContext` assembly, or LLM-driven evidence tagging.
 
+### Source Validation
+
+`backend/app/validation/source_validation.py` validates individual `SourceLink`
+objects without mutating them. It returns a `SourceLinkVerdict`; later pipeline
+steps decide whether to apply suggested changes or write adaptation logs.
+
+Validation rules:
+
+- `literal_quote` resolves `SourceLink.source_range` through `EvidenceStore`,
+  requires complete paragraph coverage, and checks whether the normalized quote
+  is an exact contiguous substring of the normalized source text.
+- Normalization reuses `chunk_novel` behavior: trim only leading and trailing
+  whitespace; do not fold case, remove punctuation, collapse internal
+  whitespace, or apply fuzzy matching.
+- A literal quote mismatch produces an error finding and suggests
+  `downgrade_to_source_based`.
+- `source_based` accepts only when its full `source_range` resolves to source
+  chunks; otherwise it suggests `mark_unverified`.
+- `invented_for_adaptation` is valid when it does not carry a quote or
+  `source_range`; if it claims source text, validation returns an error and
+  suggests `clear_quote`.
+
+`resolved`, `verbatim_ok`, and `suggested_action` are code-owned verdict fields,
+not model output fields. PR-104 does not implement citation consistency,
+pipeline mutation, status logging, fuzzy matching, similarity scoring, or LLM
+judgment.
+
 ## 5. Episode Contract
 
 Each V1 `Episode` requires the short-drama core fields:
