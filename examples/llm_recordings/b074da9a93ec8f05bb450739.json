@@ -1,0 +1,26 @@
+{
+  "fixture": true,
+  "request": {
+    "model": "fixture-replay",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a W0 smoke-test rewrite task. Return only JSON with keys rewritten_text, source_basis, and is_inferred."
+      },
+      {
+        "role": "user",
+        "content": "{\"input\": {\"instruction\": \"把这句话改成更短剧化\", \"text\": \"她站在雨里,终于意识到自己不能再退让。\"}, \"retrieval_context\": {\"evidence_chunks\": [{\"chunk_id\": \"smoke:novel:CH001:1-1\", \"metadata\": {\"chapter_id\": \"CH001\", \"character_ids\": [\"C001\"], \"conflict_type\": null, \"element_id\": null, \"emotional_tone\": \"defiant\", \"episode_id\": null, \"event_tags\": [\"turning_point\"], \"location_ids\": [], \"para_range\": [1, 1], \"scene_id\": null, \"source_hash\": \"fixture:smoke-rewrite\"}, \"source_ref\": {\"quote\": null, \"reason\": null, \"source_range\": {\"chapter_id\": \"CH001\", \"end_para\": 1, \"start_para\": 1}, \"type\": \"source_based\"}, \"source_type\": \"novel\", \"text\": \"她站在雨里,终于意识到自己不能再退让。\"}], \"profile_context\": {\"profile_id\": \"female_revenge_vertical\"}, \"query\": \"短剧化改写测试\", \"task_name\": \"SmokeRewriteTask\"}}"
+      }
+    ],
+    "temperature": 0.0
+  },
+  "response": {
+    "content": "{\"rewritten_text\":\"她抬头看向雨幕:这一次,我不退了。\",\"source_basis\":[],\"is_inferred\":true}",
+    "usage": {
+      "prompt_tokens": 64,
+      "completion_tokens": 22,
+      "total_tokens": 86
+    }
+  },
+  "recorded_at": "2026-06-13T00:00:00Z"
+}
