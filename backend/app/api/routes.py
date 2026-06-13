@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import os
+from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 
 from app.core.rate_limit import InMemoryRateLimiter, RateLimitExceeded
@@ -11,8 +14,9 @@ from app.llm.client import LLMClient
 from app.pipeline.chapter_splitter import split_novel_text
 from app.pipeline.global_scan import run_global_scan
 from app.pipeline.scene_generator import generate_screenplay
-import os
-from pathlib import Path
+from app.rag.evidence_store import EvidenceStore
+from app.schema.short_drama import Episode
+from app.validation.highlight import compute_compression_view, compute_highlight_anchors
 
 router = APIRouter()
 _rate_limiter: InMemoryRateLimiter | None = None
@@ -36,6 +40,13 @@ class GenerateResponse(BaseModel):
     global_scan: dict[str, Any]
     lint_findings: list[dict[str, Any]]
     metrics: dict[str, Any]
+
+
+class HighlightPreviewRequest(BaseModel):
+    """Read-only request for F14/F3 source highlight preview data."""
+
+    episode: Episode
+    evidence_store: dict[str, Any]
 
 
 def get_llm_client() -> LLMClient:
@@ -103,6 +114,21 @@ def get_rate_limiter() -> InMemoryRateLimiter:
 @router.get("/health")
 def health_check() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@router.get("/highlight-preview")
+def highlight_preview_api(
+    request: HighlightPreviewRequest = Body(...),
+) -> dict[str, Any]:
+    store = EvidenceStore.from_json(request.evidence_store)
+    return {
+        "highlight_anchors": jsonable_encoder(
+            compute_highlight_anchors(request.episode, store)
+        ),
+        "compression_view": jsonable_encoder(
+            compute_compression_view(request.episode, store)
+        ),
+    }
 
 
 @router.post("/generate", response_model=GenerateResponse)
