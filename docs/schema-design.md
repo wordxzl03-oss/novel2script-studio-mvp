@@ -47,6 +47,9 @@ PR-004 introduces the following schema objects:
 - `SourceRange`
 - `SourceLink`
 - `EvidenceMeta`
+- `EvidenceText`
+- `ScoredItem`
+- `IPDiagnosis`
 - `SourceNovel`
 - `RegistryCharacter`
 - `RegistryLocation`
@@ -181,6 +184,42 @@ that write.
 PR-108 remains pure runtime validation: it does not add a business agent, fixed
 pipeline module, LLM call, database, vector store, API endpoint, UI highlight
 rendering, or new model-output field.
+
+### IP Diagnosis And Story Bible
+
+PR-201 adds schema support for W2 IP asset generation while keeping all new
+fields optional at the project level.
+
+`ScoredItem` stores one normalized score and an evidence-bound rationale:
+
+- `score: float` in the inclusive range `[0, 1]`
+- `rationale: EvidenceText`
+
+`IPDiagnosis` stores F6 diagnosis output:
+
+- `adaptation_type: EvidenceText`
+- `core_conflict_strength: ScoredItem`
+- `protagonist_desire_clarity: ScoredItem`
+- `oppression_structure: ScoredItem`
+- `reversal_potential: ScoredItem`
+- `vertical_fit: ScoredItem`
+- `production_cost_risk: ScoredItem`
+- `compliance_risk_notes: list[EvidenceText]`
+- `recommended_profile_id: str`
+
+`recommended_profile_id` is a model field here only. W2 task-level validation
+will later verify that it points to a real profile id.
+
+`StoryBible` keeps its existing W0 fields and adds only one optional field:
+
+- `core_hook: EvidenceText | None = None`
+
+`ShortDramaProject` adds:
+
+- `ip_diagnosis: IPDiagnosis | None = None`
+
+PR-201 does not add generation logic, business agents, LLM calls, persistence,
+API endpoints, W3 episode/script models, or changes to the nested episode graph.
 
 ## 5. Episode Contract
 

@@ -200,3 +200,102 @@ def test_legacy_screenplay_schema_still_imports():
     from app.schema.models import Screenplay
 
     assert Screenplay.__name__ == "Screenplay"
+
+
+def evidence_text_payload(text: str = "A trust conflict drives the adaptation.") -> dict:
+    return {
+        "text": text,
+        "evidence": {
+            "source_basis": [
+                {
+                    "type": "source_based",
+                    "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 1,
+                        "end_para": 1,
+                    },
+                }
+            ],
+            "confidence": 0.8,
+            "is_inferred": False,
+            "user_locked": False,
+        },
+    }
+
+
+def scored_item_payload(score: float = 0.75) -> dict:
+    return {
+        "score": score,
+        "rationale": evidence_text_payload("The protagonist has a concrete goal."),
+    }
+
+
+def ip_diagnosis_payload() -> dict:
+    return {
+        "adaptation_type": evidence_text_payload("Female revenge vertical drama."),
+        "core_conflict_strength": scored_item_payload(0.85),
+        "protagonist_desire_clarity": scored_item_payload(0.8),
+        "oppression_structure": scored_item_payload(0.7),
+        "reversal_potential": scored_item_payload(0.9),
+        "vertical_fit": scored_item_payload(0.88),
+        "production_cost_risk": scored_item_payload(0.35),
+        "compliance_risk_notes": [
+            evidence_text_payload("Avoid presenting private violence as reward.")
+        ],
+        "recommended_profile_id": "female_revenge_vertical",
+    }
+
+
+def test_ip_diagnosis_minimal_validates():
+    from app.schema.short_drama import IPDiagnosis
+
+    diagnosis = IPDiagnosis.model_validate(ip_diagnosis_payload())
+
+    assert diagnosis.recommended_profile_id == "female_revenge_vertical"
+    assert diagnosis.core_conflict_strength.score == 0.85
+    assert diagnosis.core_conflict_strength.rationale.evidence is not None
+    assert diagnosis.compliance_risk_notes[0].text.startswith("Avoid presenting")
+
+
+def test_scored_item_requires_score_and_rationale():
+    from app.schema.short_drama import ScoredItem
+
+    with pytest.raises(ValidationError):
+        ScoredItem.model_validate({"rationale": evidence_text_payload()})
+
+    with pytest.raises(ValidationError):
+        ScoredItem.model_validate({"score": 0.5})
+
+    with pytest.raises(ValidationError):
+        ScoredItem.model_validate(
+            {"score": 1.1, "rationale": evidence_text_payload()}
+        )
+
+
+def test_story_bible_core_hook_optional_default_none():
+    from app.schema.short_drama import StoryBible
+
+    empty_bible = StoryBible()
+    bible_with_hook = StoryBible.model_validate(
+        {"core_hook": evidence_text_payload("A sealed letter reopens a cold case.")}
+    )
+
+    assert empty_bible.core_hook is None
+    assert bible_with_hook.core_hook is not None
+    assert bible_with_hook.core_hook.text == "A sealed letter reopens a cold case."
+
+
+def test_project_ip_diagnosis_optional():
+    from app.schema.short_drama import ShortDramaProject
+
+    project_without_diagnosis = ShortDramaProject.model_validate(
+        minimal_project_payload()
+    )
+    payload = minimal_project_payload()
+    payload["ip_diagnosis"] = ip_diagnosis_payload()
+
+    project_with_diagnosis = ShortDramaProject.model_validate(payload)
+
+    assert project_without_diagnosis.ip_diagnosis is None
+    assert project_with_diagnosis.ip_diagnosis is not None
+    assert project_with_diagnosis.ip_diagnosis.vertical_fit.score == 0.88
