@@ -1,0 +1,99 @@
+{
+  "response": {
+    "content": {
+      "premise": {
+        "text": "Mira reopens a buried case after finding a sealed letter.",
+        "evidence": {
+          "source_basis": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ],
+          "confidence": 0.9,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "core_hook": {
+        "text": "The first beat gives a compact case-reopening hook.",
+        "evidence": {
+          "source_basis": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ],
+          "confidence": 0.84,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "themes": [
+        {
+          "text": "A sealed message turns private doubt into public action.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.76,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ],
+      "character_arcs": [
+        {
+          "text": "Mira likely develops into an investigator-lead who acts on fragmentary clues.",
+          "evidence": {
+            "source_basis": [],
+            "confidence": 0.62,
+            "is_inferred": true,
+            "user_locked": false
+          }
+        }
+      ],
+      "major_reveals": [
+        {
+          "text": "The sealed letter implies the old case was not truly resolved.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.82,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 360,
+      "completion_tokens": 205,
+      "total_tokens": 565
+    }
+  },
+  "fixture": true
+}
