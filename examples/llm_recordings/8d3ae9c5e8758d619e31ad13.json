@@ -1,0 +1,108 @@
+{
+  "response": {
+    "content": {
+      "premise": {
+        "text": "Mira reopens a buried case after finding a sealed letter.",
+        "evidence": {
+          "source_basis": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 2,
+                "end_para": 2
+              }
+            }
+          ],
+          "confidence": 0.9,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "core_hook": {
+        "text": "A hidden letter pulls Mira back into an unresolved case.",
+        "evidence": {
+          "source_basis": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 2,
+                "end_para": 2
+              }
+            }
+          ],
+          "confidence": 0.84,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "themes": [
+        {
+          "text": "Hidden evidence forces the protagonist to choose pursuit over silence.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.75,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ],
+      "character_arcs": [
+        {
+          "text": "Mira moves from discovery to active pursuit of the old case.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.82,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ],
+      "major_reveals": [
+        {
+          "text": "Rowan hides the letter in the archive before dawn.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.9,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 360,
+      "completion_tokens": 205,
+      "total_tokens": 565
+    }
+  },
+  "fixture": true
+}
