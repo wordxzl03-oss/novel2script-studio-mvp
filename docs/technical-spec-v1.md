@@ -276,6 +276,23 @@ PR-006 实现映射:
 - `AITaskRun.retrieval_context` 使用 `backend/app/rag/types.py` 的 `RetrievalContext`。
 - W0 不在该模块中实现具体业务 task、Agent 或真实 LLM 调用。
 
+PR-202 实现映射:
+
+- `backend/app/ai/structured_task.py` 提供 `StructuredGenerationTask`, 作为 W2+
+  结构化业务输出任务的复用基类。
+- 子类只定义 `output_model`, 固定 `temperature`, 以及具体 `build_messages(...)`;
+  基类不包含 IP 诊断、故事圣经或其他业务 prompt。
+- 基类运行顺序为 LLM chat -> JSON parse -> optional JSON repair ->
+  schema validation -> optional schema repair -> source validation step ->
+  `AITaskRun` assembly。
+- `validate_output(output, retrieval_context, store)` 强制调用
+  `run_source_validation_step(...)`, 并把子类 `extra_validate(...)` 的任务级
+  findings 合并进同一个 `ValidationReport`。
+- JSON 或 schema 自愈次数写入 `AITaskRun.repair_attempts`;通过自愈后成功的任务
+  使用 `status="repaired"`, 仍有 error finding 的任务使用 `status="failed"`。
+- replay 模式读取 fixture recording 中的 usage 作为链路验证数据;fixture 必须显式
+  标记 `fixture=true`, 且 replay usage 不进入成本口径。
+
 ### 5.3 `backend/app/agents/base.py`
 
 该模块定义 bounded agent 的基础类型。
