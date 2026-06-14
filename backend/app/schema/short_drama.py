@@ -56,6 +56,23 @@ class EvidenceText(StrictModel):
     evidence: EvidenceMeta | None = None
 
 
+class ScoredItem(StrictModel):
+    score: float = Field(ge=0, le=1)
+    rationale: EvidenceText
+
+
+class IPDiagnosis(StrictModel):
+    adaptation_type: EvidenceText
+    core_conflict_strength: ScoredItem
+    protagonist_desire_clarity: ScoredItem
+    oppression_structure: ScoredItem
+    reversal_potential: ScoredItem
+    vertical_fit: ScoredItem
+    production_cost_risk: ScoredItem
+    compliance_risk_notes: list[EvidenceText] = Field(default_factory=list)
+    recommended_profile_id: str = Field(min_length=1)
+
+
 class SourceChapter(StrictModel):
     chapter_id: str = Field(min_length=1)
     title: str = Field(min_length=1)
@@ -100,6 +117,7 @@ class Registry(StrictModel):
 
 class StoryBible(StrictModel):
     premise: EvidenceText | None = None
+    core_hook: EvidenceText | None = None
     themes: list[EvidenceText] = Field(default_factory=list)
     character_arcs: list[EvidenceText] = Field(default_factory=list)
     major_reveals: list[EvidenceText] = Field(default_factory=list)
@@ -254,5 +272,6 @@ class ShortDramaProject(StrictModel):
     source_novel: SourceNovel
     registry: Registry = Field(default_factory=Registry)
     story_bible: StoryBible = Field(default_factory=StoryBible)
+    ip_diagnosis: IPDiagnosis | None = None
     series: Series
     profile: ShortDramaProfile | None = None
