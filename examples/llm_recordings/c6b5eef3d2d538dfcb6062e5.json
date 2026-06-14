@@ -1,0 +1,177 @@
+{
+  "response": {
+    "content": {
+      "adaptation_type": {
+        "text": "Female revenge vertical drama",
+        "evidence": {
+          "source_basis": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ],
+          "confidence": 0.9,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "core_conflict_strength": {
+        "score": 0.86,
+        "rationale": {
+          "text": "The case is reopened by a sealed letter while another character hides evidence.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.9,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      },
+      "protagonist_desire_clarity": {
+        "score": 0.82,
+        "rationale": {
+          "text": "Mira explicitly decides to reopen the case.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.9,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      },
+      "oppression_structure": {
+        "score": 0.72,
+        "rationale": {
+          "text": "Rowan hiding the letter creates pressure against Mira's search.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.82,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      },
+      "reversal_potential": {
+        "score": 0.88,
+        "rationale": {
+          "text": "The letter and archive concealment support clue reversals.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.84,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      },
+      "vertical_fit": {
+        "score": 0.84,
+        "rationale": {
+          "text": "The opening can be staged through a close-up prop and direct pursuit decision.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.78,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      },
+      "production_cost_risk": {
+        "score": 0.25,
+        "rationale": {
+          "text": "The setup centers on a letter and archive action rather than costly spectacle.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.76,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      },
+      "compliance_risk_notes": [
+        {
+          "text": "Keep revenge framing as a risk hint rather than a legal conclusion.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.65,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ],
+      "recommended_profile_id": "missing_profile"
+    },
+    "usage": {
+      "prompt_tokens": 470,
+      "completion_tokens": 260,
+      "total_tokens": 730
+    }
+  },
+  "fixture": true
+}

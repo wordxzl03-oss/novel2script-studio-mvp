@@ -189,6 +189,26 @@ W0 不创建以下文件:
 
 业务 Agent 从 W2 起按波次接入。没有 Evidence Index 之前, 业务 Agent 只能空转, 所以不得提前铺空壳。
 
+### 4.2.1 W2 DiagnosisAgent
+
+W2 introduces `backend/app/agents/diagnosis_agent.py` as the first concrete
+business agent. `DiagnosisAgent` is a bounded orchestrator for F6 IP diagnosis;
+it does not call the LLM directly and does not repeat schema or source
+validation.
+
+The fixed step order is:
+
+1. `retrieve_context`: build a full-novel `RetrievalContext` from the provided
+   `SourceNovel`, `Registry`, and caller-provided `EvidenceStore`.
+2. `run_diagnosis`: call `IPDiagnosisTask.run(retrieval_context, store)`.
+3. `validate`: reflect the task validation report in the final `AgentRun`.
+
+The agent returns `AgentRun(status="success")` only when the underlying
+`IPDiagnosisTask` validation passes. A task-level failure, such as an unknown
+`recommended_profile_id`, is represented as `AgentRun(status="failed")` with
+the failed `AITaskRun` attached to the `run_diagnosis` step. `final_output_ref`
+points at the successful IP diagnosis task run.
+
 ### 4.3 导出不是 Agent
 
 F28 开发包导出是确定性汇总流程:
