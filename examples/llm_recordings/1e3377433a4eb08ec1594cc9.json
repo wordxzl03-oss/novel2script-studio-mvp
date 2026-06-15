@@ -1,0 +1,108 @@
+{
+  "response": {
+    "content": {
+      "premise": {
+        "text": "Generated premise should be replaced.",
+        "evidence": {
+          "source_basis": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ],
+          "confidence": 0.9,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "core_hook": {
+        "text": "A hidden letter forces Mira and Rowan into direct conflict.",
+        "evidence": {
+          "source_basis": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ],
+          "confidence": 0.87,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "themes": [
+        {
+          "text": "Generated theme for unlocked merge.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.78,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ],
+      "character_arcs": [
+        {
+          "text": "Mira turns a private discovery into an active investigation.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.8,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ],
+      "major_reveals": [
+        {
+          "text": "Rowan hides the letter before dawn.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.9,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 415,
+      "completion_tokens": 220,
+      "total_tokens": 635
+    }
+  },
+  "fixture": true
+}

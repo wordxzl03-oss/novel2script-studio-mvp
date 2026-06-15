@@ -209,6 +209,30 @@ The agent returns `AgentRun(status="success")` only when the underlying
 the failed `AITaskRun` attached to the `run_diagnosis` step. `final_output_ref`
 points at the successful IP diagnosis task run.
 
+### 4.2.2 W2 StoryBibleAgent
+
+W2 also introduces `backend/app/agents/story_bible_agent.py` for F7 story bible
+generation. `StoryBibleAgent` is a bounded orchestrator around
+`StoryBibleTask`; it does not call the LLM directly and does not repeat schema
+or source validation.
+
+The fixed step order is:
+
+1. `retrieve_context`: build a full-novel `RetrievalContext` from the provided
+   `SourceNovel`, `Registry`, and caller-provided `EvidenceStore`.
+2. `run_bible`: call `StoryBibleTask.run(retrieval_context, store)`.
+3. `merge_locked`: preserve any `EvidenceText` whose
+   `evidence.user_locked=true` in an existing `StoryBible`.
+4. `index_bible`: convert the final `StoryBible` into
+   `EvidenceChunk(source_type="story_bible")` entries via
+   `index_story_bible()` and add them back to the same `EvidenceStore`.
+5. `validate`: reflect the task validation report in the final `AgentRun`.
+
+The story bible index is mechanical evidence backfill for later retrieval. It
+does not create project persistence, vector search, W3 episode planning, or
+script generation. A failed `StoryBibleTask` remains a structured
+`AgentRun(status="failed")` and skips merge/index steps.
+
 ### 4.3 导出不是 Agent
 
 F28 开发包导出是确定性汇总流程:
