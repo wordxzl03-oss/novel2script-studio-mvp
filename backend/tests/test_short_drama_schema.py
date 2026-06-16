@@ -223,6 +223,17 @@ def evidence_text_payload(text: str = "A trust conflict drives the adaptation.")
     }
 
 
+def source_link_payload(start_para: int = 1, end_para: int = 1) -> dict:
+    return {
+        "type": "source_based",
+        "source_range": {
+            "chapter_id": "CH001",
+            "start_para": start_para,
+            "end_para": end_para,
+        },
+    }
+
+
 def scored_item_payload(score: float = 0.75) -> dict:
     return {
         "score": score,
@@ -299,3 +310,91 @@ def test_project_ip_diagnosis_optional():
     assert project_without_diagnosis.ip_diagnosis is None
     assert project_with_diagnosis.ip_diagnosis is not None
     assert project_with_diagnosis.ip_diagnosis.vertical_fit.score == 0.88
+
+
+def episode_outline_payload() -> dict:
+    return {
+        "number": 1,
+        "title": "Letter in the Rain",
+        "logline": "A sealed letter reopens an old case.",
+        "opening_hook": "A letter appears under the door.",
+        "main_conflict": "She must decide whether to reopen the case.",
+        "emotional_payoff": "She chooses to stop retreating.",
+        "cliffhanger": "A hidden name appears on the page.",
+        "source_ranges": [source_link_payload(1, 2)],
+    }
+
+
+def test_episode_outline_requires_core_fields_and_has_no_scenes():
+    from app.schema.short_drama import EpisodeOutline
+
+    outline = EpisodeOutline.model_validate(episode_outline_payload())
+
+    assert outline.number == 1
+    assert "scenes" not in outline.model_dump()
+
+    for field_name in (
+        "opening_hook",
+        "main_conflict",
+        "emotional_payoff",
+        "cliffhanger",
+        "source_ranges",
+    ):
+        payload = episode_outline_payload()
+        del payload[field_name]
+
+        with pytest.raises(ValidationError):
+            EpisodeOutline.model_validate(payload)
+
+    with pytest.raises(ValidationError):
+        EpisodeOutline.model_validate({**episode_outline_payload(), "scenes": []})
+
+
+def test_episode_outline_plan_min_one():
+    from app.schema.short_drama import EpisodeOutlinePlan
+
+    plan = EpisodeOutlinePlan.model_validate(
+        {"outlines": [episode_outline_payload()]}
+    )
+
+    assert len(plan.outlines) == 1
+
+    with pytest.raises(ValidationError):
+        EpisodeOutlinePlan.model_validate({"outlines": []})
+
+
+def test_retention_plan_min_one():
+    from app.schema.short_drama import RetentionPlan
+
+    plan = RetentionPlan.model_validate(
+        {
+            "points": [
+                {
+                    "point_id": "RP001",
+                    "kind": "reveal",
+                    "description": "The old case is not closed.",
+                }
+            ]
+        }
+    )
+
+    assert len(plan.points) == 1
+
+    with pytest.raises(ValidationError):
+        RetentionPlan.model_validate({"points": []})
+
+
+def test_series_outlines_optional_default_empty():
+    from app.schema.short_drama import Series
+
+    series_payload = minimal_project_payload()["series"]
+    series = Series.model_validate(series_payload)
+
+    assert series.outlines == []
+
+    series_with_outline = Series.model_validate(
+        {**series_payload, "outlines": [episode_outline_payload()]}
+    )
+
+    assert len(series_with_outline.outlines) == 1
+    assert len(series_with_outline.episodes) == 1
