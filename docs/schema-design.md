@@ -55,7 +55,10 @@ PR-004 introduces the following schema objects:
 - `RegistryLocation`
 - `Registry`
 - `StoryBible`
+- `EpisodeOutline`
+- `EpisodeOutlinePlan`
 - `RetentionPoint`
+- `RetentionPlan`
 - `Fidelity`
 - `VisualLayer`
 - `AdaptationLogEntry`
@@ -254,6 +257,35 @@ PR-106 makes `Episode.source_ranges` operational for F8 source binding:
   `source_link`, `source_range`, `resolved_text`, and `source_type`.
 - F8 stores only backend binding and resolution data. It does not change the
   nested Episode schema, render F14 UI, call an LLM, or add persistence.
+
+### W3 Outline And Retention Planning
+
+PR-301 adds outline-only planning models without changing the existing nested
+episode contract.
+
+`EpisodeOutline` stores the episode-level plan fields required before scene and
+beat writing:
+
+- `number`
+- `title`
+- `logline`
+- `opening_hook`
+- `main_conflict`
+- `emotional_payoff`
+- `cliffhanger`
+- `source_ranges: list[SourceLink]`
+
+`EpisodeOutline` intentionally does not include `scenes`, `retention_points`,
+`fidelity`, `quality_checks`, `visual_layer`, `forks`, or `adaptation_log`.
+Those remain part of full `Episode` output.
+
+`EpisodeOutlinePlan` wraps a non-empty `outlines: list[EpisodeOutline]`.
+
+`RetentionPlan` wraps a non-empty `points: list[RetentionPoint]` while reusing
+the existing `RetentionPoint` object.
+
+`Series` keeps `episodes: list[Episode]` unchanged and adds optional
+`outlines: list[EpisodeOutline] = []` for W3 planning state.
 
 ## 6. Scene, Beat, And Element
 

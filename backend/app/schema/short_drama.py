@@ -123,11 +123,30 @@ class StoryBible(StrictModel):
     major_reveals: list[EvidenceText] = Field(default_factory=list)
 
 
+class EpisodeOutline(StrictModel):
+    number: int = Field(ge=1)
+    title: str | None = None
+    logline: str | None = None
+    opening_hook: str = Field(min_length=1)
+    main_conflict: str = Field(min_length=1)
+    emotional_payoff: str = Field(min_length=1)
+    cliffhanger: str = Field(min_length=1)
+    source_ranges: list[SourceLink] = Field(min_length=1)
+
+
+class EpisodeOutlinePlan(StrictModel):
+    outlines: list[EpisodeOutline] = Field(min_length=1)
+
+
 class RetentionPoint(StrictModel):
     point_id: str = Field(min_length=1)
     kind: RetentionPointKind
     description: str = Field(min_length=1)
     evidence: EvidenceMeta | None = None
+
+
+class RetentionPlan(StrictModel):
+    points: list[RetentionPoint] = Field(min_length=1)
 
 
 class Fidelity(StrictModel):
@@ -257,6 +276,7 @@ class Series(StrictModel):
     series_id: str = Field(min_length=1)
     title: str = Field(min_length=1)
     episodes: list[Episode] = Field(min_length=1)
+    outlines: list[EpisodeOutline] = Field(default_factory=list)
 
 
 class ShortDramaProfile(StrictModel):
