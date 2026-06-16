@@ -1,0 +1,81 @@
+{
+  "response": {
+    "content": {
+      "premise": {
+        "text": "Mira reopens the case without cited evidence.",
+        "evidence": {
+          "source_basis": [],
+          "confidence": 0.6,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "core_hook": {
+        "text": "Mira finds a letter while Rowan hides it in the archive.",
+        "evidence": {
+          "source_basis": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ],
+          "confidence": 0.86,
+          "is_inferred": false,
+          "user_locked": false
+        }
+      },
+      "themes": [
+        {
+          "text": "A buried truth returns through a hidden object.",
+          "evidence": {
+            "source_basis": [],
+            "confidence": 0.7,
+            "is_inferred": true,
+            "user_locked": false
+          }
+        }
+      ],
+      "character_arcs": [
+        {
+          "text": "Mira commits to the investigation.",
+          "evidence": {
+            "source_basis": [],
+            "confidence": 0.7,
+            "is_inferred": true,
+            "user_locked": false
+          }
+        }
+      ],
+      "major_reveals": [
+        {
+          "text": "Rowan hides the letter in the archive before dawn.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.9,
+            "is_inferred": false,
+            "user_locked": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 412,
+      "completion_tokens": 205,
+      "total_tokens": 617
+    }
+  },
+  "fixture": true
+}

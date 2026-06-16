@@ -1,4 +1,5 @@
 from app.rag.chunker import chunk_novel, normalize_source_text, source_hash_for_text
+from app.rag.bible_index import index_story_bible
 from app.rag.evidence_store import EvidenceStore
 from app.rag.indexer import EvidenceIndex, build_inverted_index
 from app.rag.retriever import (
@@ -23,6 +24,7 @@ __all__ = [
     "build_inverted_index",
     "bind_source_ranges",
     "chunk_novel",
+    "index_story_bible",
     "normalize_source_text",
     "resolve_episode_sources",
     "retrieve_by_tags",
