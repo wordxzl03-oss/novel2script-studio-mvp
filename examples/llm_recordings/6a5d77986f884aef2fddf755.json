@@ -1,0 +1,204 @@
+{
+  "response": {
+    "content": {
+      "outlines": [
+        {
+          "number": 1,
+          "title": "The Letter",
+          "logline": "Mira reopens the case after finding a sealed letter.",
+          "opening_hook": "Mira finds a sealed letter hidden under her door.",
+          "main_conflict": "Mira must confront Rowan over the hidden archive letter.",
+          "emotional_payoff": "Mira chooses action instead of silence.",
+          "cliffhanger": "The letter points to a second file in the archive.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Archive Before Dawn",
+          "logline": "Rowan tries to hide the evidence before Mira can reach it.",
+          "opening_hook": "Rowan slips into the archive before dawn.",
+          "main_conflict": "Mira must expose Rowan before the archive evidence disappears.",
+          "emotional_payoff": "Mira realizes Rowan is afraid of the truth.",
+          "cliffhanger": "A torn label reveals another storage room.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 2,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "Pier Confession",
+          "logline": "Mira corners Rowan at the pier and records his confession.",
+          "opening_hook": "Mira waits at the pier with the recorder already running.",
+          "main_conflict": "Mira must confront Rowan before he can destroy the recording.",
+          "emotional_payoff": "Mira hears the confession she risked everything to capture.",
+          "cliffhanger": "Rowan says the real order came from someone above him.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 3,
+                "end_para": 3
+              }
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Second File",
+          "logline": "The archive clue leads Mira to a file Rowan thought was gone.",
+          "opening_hook": "Mira opens the storage room and finds a clean file mark.",
+          "main_conflict": "Mira must fight Rowan's cover story with the second file.",
+          "emotional_payoff": "Mira confirms the case was never closed.",
+          "cliffhanger": "The file lists Mira's family as witnesses.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Witness List",
+          "logline": "Mira discovers that her family was tied to the hidden case.",
+          "opening_hook": "A witness list places Mira's family inside the old case.",
+          "main_conflict": "Mira must confront Rowan while protecting the witness list.",
+          "emotional_payoff": "Mira understands why the letter was sent to her.",
+          "cliffhanger": "One witness is marked as still alive.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 3
+              }
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Still Alive",
+          "logline": "Mira follows the surviving witness before Rowan reaches them.",
+          "opening_hook": "Mira spots the living witness leaving the pier road.",
+          "main_conflict": "Mira must protect the witness against Rowan's pressure.",
+          "emotional_payoff": "Mira earns the witness's trust.",
+          "cliffhanger": "The witness names a hidden archive account.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 2,
+                "end_para": 3
+              }
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "Hidden Account",
+          "logline": "The hidden account links Rowan to the case cover-up.",
+          "opening_hook": "Mira logs into the hidden archive account.",
+          "main_conflict": "Mira must reveal Rowan's account before he deletes it.",
+          "emotional_payoff": "Mira sees the first proof that can hold.",
+          "cliffhanger": "A scheduled deletion begins counting down.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 2,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "title": "Countdown",
+          "logline": "Mira races the deletion clock while Rowan closes in.",
+          "opening_hook": "The archive clock starts deleting the evidence file.",
+          "main_conflict": "Mira must stop Rowan and save the archive proof.",
+          "emotional_payoff": "Mira keeps the evidence alive.",
+          "cliffhanger": "The saved file opens to a confession transcript.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Transcript",
+          "logline": "The transcript exposes what Rowan hid and why.",
+          "opening_hook": "Mira reads the confession transcript aloud.",
+          "main_conflict": "Mira must force Rowan to answer for the transcript.",
+          "emotional_payoff": "Mira finally hears the truth in Rowan's own words.",
+          "cliffhanger": "The transcript names a final unseen handler.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 3,
+                "end_para": 3
+              }
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "title": "The Handler",
+          "logline": "Mira uses Rowan's confession to pursue the unseen handler.",
+          "opening_hook": "Mira plays Rowan's confession where the handler can hear it.",
+          "main_conflict": "Mira must confront the handler without losing Rowan's proof.",
+          "emotional_payoff": "Mira turns a private case into public leverage.",
+          "cliffhanger": "The handler replies with Mira's real family name.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 650,
+      "completion_tokens": 680,
+      "total_tokens": 1330
+    }
+  },
+  "fixture": true
+}

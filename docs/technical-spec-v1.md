@@ -295,6 +295,32 @@ recordings supply replay usage, and no live HTTP request is allowed. W2 does
 not add project persistence, public generation endpoints, W3 episode planning,
 or script generation.
 
+### 4.2.4 W3 EpisodePlannerAgent
+
+PR-304 introduces `backend/app/agents/episode_planner_agent.py` for F9 episode
+outline planning. `EpisodePlannerAgent` is a bounded orchestrator around
+`EpisodePlannerTask`; it does not call the LLM directly, does not repeat source
+validation, and does not write scripts.
+
+The fixed step order is:
+
+1. `retrieve_context`: build a planning `RetrievalContext` from all novel
+   chunks in the caller-provided `EvidenceStore` plus chunks tagged
+   `event_tags=["story_bible"]`.
+2. `run_planner`: call
+   `EpisodePlannerTask.run(retrieval_context, store)`.
+3. `store_outlines`: write the successful `EpisodeOutlinePlan.outlines` into
+   the caller-provided `Series.outlines`.
+4. `validate`: reflect the task validation report in the final `AgentRun`.
+
+The agent returns `AgentRun(status="success")` only when the underlying
+`EpisodePlannerTask` validation passes and the output is an
+`EpisodeOutlinePlan`. Task failures, including unresolved source ranges or
+short-drama linter errors, remain structured `AgentRun(status="failed")` values
+with the failed `AITaskRun` attached to the `run_planner` step. PR-304 does not
+introduce project persistence, API routes, UI, F10 script writing, F12 retention
+points, or vector retrieval.
+
 ### 4.3 导出不是 Agent
 
 F28 开发包导出是确定性汇总流程:

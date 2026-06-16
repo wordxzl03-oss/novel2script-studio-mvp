@@ -1,0 +1,33 @@
+{
+  "response": {
+    "content": {
+      "outlines": [
+        {
+          "number": 1,
+          "title": "Unresolved Source",
+          "logline": "Mira follows a clue outside the available evidence.",
+          "opening_hook": "Mira opens a file that the provided evidence does not contain.",
+          "main_conflict": "Mira must challenge Rowan with evidence the store cannot resolve.",
+          "emotional_payoff": "Mira realizes the claim needs verification.",
+          "cliffhanger": "The missing chapter is cited as proof.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH999",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 650,
+      "completion_tokens": 120,
+      "total_tokens": 770
+    }
+  },
+  "fixture": true
+}
