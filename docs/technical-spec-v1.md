@@ -321,6 +321,35 @@ with the failed `AITaskRun` attached to the `run_planner` step. PR-304 does not
 introduce project persistence, API routes, UI, F10 script writing, F12 retention
 points, or vector retrieval.
 
+### 4.2.5 W3 EpisodeWriterAgent
+
+PR-306 introduces `backend/app/agents/episode_writer_agent.py` for controlled
+F10 script writing. `EpisodeWriterAgent` is a bounded orchestrator around
+`EpisodeScriptTask`; it does not call the LLM directly, does not repeat source
+validation or short-drama linting, and does not create project persistence.
+
+The fixed per-episode step order is:
+
+1. `select_outline`: select each outline from `Series.outlines[:max_episodes]`;
+   the default limit is 3.
+2. `retrieve_context`: build a script `RetrievalContext` from the selected
+   outline's concrete `SourceLink.source_range` values plus chunks tagged
+   `event_tags=["story_bible"]`.
+3. `run_script`: call
+   `EpisodeScriptTask.run(retrieval_context, store)`.
+4. `store_episode`: append successful `Episode` outputs to the generated
+   episode list.
+5. `validate`: summarize the run after all selected outlines have been tried.
+
+After the loop, the agent replaces `Series.episodes` with the successfully
+generated episodes. A failed episode task is represented as a failed
+`run_script` step with its `AITaskRun` attached and a skipped `store_episode`
+step; later outlines still run. The final `AgentRun.status` is `success` when
+all selected outlines produce valid episodes, `partial` when at least one
+selected outline succeeds and at least one fails, and `failed` when no selected
+outline produces an episode. PR-306 does not introduce F9 planning, F12
+retention points, W6 forks, API routes, UI, or persistence.
+
 ### 4.3 导出不是 Agent
 
 F28 开发包导出是确定性汇总流程:
