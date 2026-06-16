@@ -59,6 +59,10 @@ V1 是完整竖屏短剧改编工作台, 不再以旧版场景级剧本生成链
 -> 导出短剧开发包
 ```
 
+W2 status: IP diagnosis and story bible generation are available in replay
+mode through `DiagnosisAgent` and `StoryBibleAgent`; later episode planning,
+script generation, and UI workflows remain future waves.
+
 所有涉及 AI 的诊断、生成、改写、分叉、评估与风险提示都必须经过 AI 编排层。没有 `RetrievalContext`、`ValidationReport` 和 `AITaskRun` 的 AI 输出不得进入正式项目状态。
 
 F28 开发包导出是确定性汇总流程, 不经 LLM, 不设 Agent。导出可以读取已有 `AITaskRun` 摘要写入审计材料, 但不会为了凑 AI 流程而创建 `export_agent.py`。

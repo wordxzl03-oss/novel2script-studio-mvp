@@ -44,3 +44,14 @@ Response:
 This endpoint does not call an LLM, does not trigger generation, does not write
 project state, and does not render F14 UI. W2+ can replace the request-body
 preview shape with project/episode IDs after project storage exists.
+
+## W2 Replay Agent Boundary
+
+W2 does not add public HTTP endpoints for IP diagnosis or story bible
+generation. The W2 path is internal and replay-testable: callers provide a
+`SourceNovel`, `Registry`, and in-memory `EvidenceStore` directly to
+`DiagnosisAgent` and `StoryBibleAgent`.
+
+External API design for these agents is deferred until project storage exists,
+so W2 does not introduce request/response contracts that would imply persisted
+project IDs or user-facing generation state.

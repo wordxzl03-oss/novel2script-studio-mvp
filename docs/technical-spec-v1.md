@@ -233,6 +233,24 @@ does not create project persistence, vector search, W3 episode planning, or
 script generation. A failed `StoryBibleTask` remains a structured
 `AgentRun(status="failed")` and skips merge/index steps.
 
+### 4.2.3 W2 end-to-end replay contract
+
+W2 closes with a replay-only integration path:
+
+1. `chunk_novel(source_novel, registry)` fills an in-memory `EvidenceStore`
+   with `source_type="novel"` chunks.
+2. `DiagnosisAgent.run(project_id, source_novel, registry)` produces a
+   successful `AgentRun` whose attached `IPDiagnosisTask` ran in replay mode.
+3. `StoryBibleAgent.run(project_id, source_novel, registry)` consumes the same
+   store, produces a successful `AgentRun`, and backfills
+   `source_type="story_bible"` chunks into that store.
+
+This contract is covered by `backend/tests/test_w2_end_to_end.py`. The test
+must pass without `LLM_API_KEY`, `LLM_BASE_URL`, or `LLM_MODEL`; fixture
+recordings supply replay usage, and no live HTTP request is allowed. W2 does
+not add project persistence, public generation endpoints, W3 episode planning,
+or script generation.
+
 ### 4.3 导出不是 Agent
 
 F28 开发包导出是确定性汇总流程:
