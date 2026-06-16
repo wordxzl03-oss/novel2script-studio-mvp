@@ -1,0 +1,131 @@
+{
+  "response": {
+    "content": {
+      "episode_id": "E001",
+      "number": 1,
+      "title": "The Letter",
+      "logline": "Mira reopens the case after finding a sealed letter.",
+      "opening_hook": "Mira finds a sealed letter hidden under her door.",
+      "main_conflict": "Mira must confront Rowan over the hidden archive letter.",
+      "emotional_payoff": "Mira chooses action instead of silence.",
+      "cliffhanger": "The letter points to Rowan's archive trail.",
+      "source_ranges": [
+        {
+          "type": "source_based",
+          "source_range": {
+            "chapter_id": "CH001",
+            "start_para": 1,
+            "end_para": 3
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "scene_id": "SC001",
+          "title": "archive letter confrontation",
+          "source_links": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 3
+              }
+            }
+          ],
+          "beats": [
+            {
+              "beat_id": "B001",
+              "summary": "Mira follows the letter trail from the door to Rowan.",
+              "elements": [
+                {
+                  "element_id": "EL001",
+                  "type": "action",
+                  "text": "Mira lifts the sealed letter and locks onto the archive stamp.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 1,
+                        "end_para": 1
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "EL002",
+                  "type": "dialogue",
+                  "speaker_id": "C001",
+                  "text": "Rowan hid this before dawn, and now I know where he ran.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 1,
+                        "end_para": 2
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "EL003",
+                  "type": "action",
+                  "text": "Rowan steps back from the archive shelf and shields the file.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 2,
+                        "end_para": 2
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "EL004",
+                  "type": "dialogue",
+                  "speaker_id": "C002",
+                  "text": "You should have left that letter sealed, Mira.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 2,
+                        "end_para": 3
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "EL005",
+                  "type": "action",
+                  "text": "Mira turns on the recorder as Rowan's confession begins at the pier.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 3,
+                        "end_para": 3
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 720,
+      "completion_tokens": 520,
+      "total_tokens": 1240
+    }
+  },
+  "fixture": true
+}
