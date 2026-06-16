@@ -1,0 +1,33 @@
+{
+  "response": {
+    "content": {
+      "outlines": [
+        {
+          "number": 1,
+          "title": "Placeholder Hook",
+          "logline": "Mira has a valid source range but an unusable hook.",
+          "opening_hook": "TBD",
+          "main_conflict": "Mira must confront Rowan over the hidden archive letter.",
+          "emotional_payoff": "Mira chooses action instead of silence.",
+          "cliffhanger": "The letter points to a second file in the archive.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 610,
+      "completion_tokens": 130,
+      "total_tokens": 740
+    }
+  },
+  "fixture": true
+}

@@ -1,0 +1,33 @@
+{
+  "response": {
+    "content": {
+      "outlines": [
+        {
+          "number": 1,
+          "title": "False Citation",
+          "logline": "Mira follows a clue that cites an unavailable chapter.",
+          "opening_hook": "Mira finds a sealed letter hidden under her door.",
+          "main_conflict": "Mira must confront Rowan over the missing archive evidence.",
+          "emotional_payoff": "Mira decides to keep investigating.",
+          "cliffhanger": "The false clue points outside the retrieved evidence.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH999",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 610,
+      "completion_tokens": 140,
+      "total_tokens": 750
+    }
+  },
+  "fixture": true
+}
