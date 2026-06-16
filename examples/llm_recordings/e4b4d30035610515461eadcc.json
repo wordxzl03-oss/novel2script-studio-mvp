@@ -1,0 +1,116 @@
+{
+  "response": {
+    "content": {
+      "episode_id": "E001",
+      "number": 1,
+      "title": "The Letter",
+      "logline": "Mira reopens the case after finding a sealed letter.",
+      "opening_hook": "Mira finds a sealed letter hidden under her door.",
+      "main_conflict": "Mira must confront Rowan over the hidden archive letter.",
+      "emotional_payoff": "Mira chooses action instead of silence.",
+      "cliffhanger": "The letter points to Rowan's archive trail.",
+      "source_ranges": [
+        {
+          "type": "source_based",
+          "source_range": {
+            "chapter_id": "CH001",
+            "start_para": 1,
+            "end_para": 3
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "scene_id": "SC001",
+          "title": "archive letter confrontation",
+          "source_links": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 3
+              }
+            }
+          ],
+          "beats": [
+            {
+              "beat_id": "B001",
+              "summary": "Mira follows the letter trail from the door to Rowan.",
+              "elements": [
+                {
+                  "element_id": "EL001",
+                  "type": "action",
+                  "text": "Mira lifts a file from an unavailable chapter.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH999",
+                        "start_para": 1,
+                        "end_para": 1
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "EL002",
+                  "type": "dialogue",
+                  "speaker_id": "C001",
+                  "text": "This citation has to be checked before we trust it.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 1,
+                        "end_para": 1
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "EL003",
+                  "type": "action",
+                  "text": "Rowan blocks the archive door with the hidden file.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 2,
+                        "end_para": 2
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "EL004",
+                  "type": "dialogue",
+                  "speaker_id": "C002",
+                  "text": "You cannot prove what you cannot source.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 2,
+                        "end_para": 3
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 720,
+      "completion_tokens": 430,
+      "total_tokens": 1150
+    }
+  },
+  "fixture": true
+}
