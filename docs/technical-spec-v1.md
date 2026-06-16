@@ -149,6 +149,50 @@ source validation step including citation consistency -> later linter stages。
 W2 及之后的业务 `AITask` 必须在 `validate_output()` 中接入该步骤, 再进入 W3
 短剧 Linter 或项目状态写入。
 
+### 3.4 W3 Short-Drama Linter
+
+PR-302 introduces `backend/app/validation/short_drama_linter.py` as the F5
+deterministic short-drama linter. It is separate from legacy `backend/app/linter`
+and operates only on V1 `Episode` and `EpisodeOutline` objects.
+
+Public functions:
+
+- `lint_episode(episode, *, registry, profile) -> list[ValidationFinding]`
+- `lint_outline(outline, *, registry, profile) -> list[ValidationFinding]`
+
+The `profile` argument is the loaded profile object from `app.profiles.loader`,
+because it owns the style thresholds for `episode_duration_sec`,
+`scene_count_per_episode`, `opening_hook_required`, and
+`cliffhanger_required`.
+
+Rules implemented in PR-302:
+
+- `missing_opening_hook`: error when `opening_hook` is placeholder-like.
+- `missing_cliffhanger`: error when `cliffhanger` is placeholder-like.
+- `unclear_main_conflict`: warning when `main_conflict` is too short or lacks a
+  clear conflict signal.
+- `unregistered_character`: error when a `DialogueElement.speaker_id` is not in
+  `Registry.characters`.
+- `unregistered_location`: warning when a scene title does not reference a
+  registered location name, alias, or id.
+- `episode_duration_out_of_range`: warning when deterministic element-count
+  duration estimation falls outside `profile.episode_duration_sec`.
+- `scene_count_out_of_range`: warning when `len(Episode.scenes)` falls outside
+  `profile.scene_count_per_episode`.
+- `unfilmable_inner_monologue`: warning for action text that describes internal
+  thought instead of filmable action.
+- `block_too_long`: warning for action or dialogue blocks that exceed module
+  fallback length thresholds.
+
+All findings include schema-shaped paths such as
+`scenes[0].beats[0].elements[1].speaker_id`. The linter reads
+`episode.scenes`, `scene.beats`, and `beat.elements`; it must not use legacy
+`scene_ids`.
+
+The linter is pure validation code. PR-302 does not call an LLM, does not touch
+`StructuredGenerationTask`, does not wire tasks or agents, does not add UI, and
+does not modify legacy `backend/app/linter`.
+
 ## 4. Bounded Agent 架构
 
 Bounded Agent 是受控任务编排, 不是自由行动 Agent。每个 Agent 只能负责一个明确业务任务, 并受固定输入、固定输出 schema、工具白名单、校验器、修复策略和日志约束。
