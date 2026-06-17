@@ -350,6 +350,33 @@ selected outline succeeds and at least one fails, and `failed` when no selected
 outline produces an episode. PR-306 does not introduce F9 planning, F12
 retention points, W6 forks, API routes, UI, or persistence.
 
+### 4.2.6 W3 RetentionPointTask
+
+PR-307 introduces `backend/app/ai/tasks/retention_points.py` for the first F12
+retention and paywall recommendations. `RetentionPointTask` is a
+`StructuredGenerationTask` with `output_model=RetentionPlan` and fixed
+`temperature=0.2`.
+
+The task receives one completed `Episode` at construction time. Its prompt
+passes the episode hook, conflict, payoff, cliffhanger, scene/beat/element
+summary, and the retrieved evidence chunks into the LLM. Output points use the
+existing `RetentionPoint.kind` values:
+
+- `hook`, `reveal`, `reversal`, and `cliffhanger` for retention suggestions.
+- `paywall` for paid-break suggestions.
+
+Each point stores the recommendation and rationale in `description`, because
+the V1 schema does not define a separate rationale field for
+`RetentionPoint`. Evidence must be carried through `RetentionPoint.evidence`;
+`evidence.source_basis` is validated by the common source-validation step
+against the current `RetrievalContext`. A citation outside the retrieved
+evidence fails the task.
+
+`attach_retention_points(episode, plan)` mechanically writes `plan.points` into
+`episode.retention_points` and returns the same episode. PR-307 does not add W7
+visual placement, retention UI, conversion guarantees, API routes, persistence,
+forks, or fidelity review.
+
 ### 4.3 导出不是 Agent
 
 F28 开发包导出是确定性汇总流程:

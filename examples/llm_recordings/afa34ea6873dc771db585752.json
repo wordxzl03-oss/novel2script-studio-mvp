@@ -1,0 +1,33 @@
+{
+  "response": {
+    "content": {
+      "points": [
+        {
+          "point_id": "RP999",
+          "kind": "paywall",
+          "description": "Suggested paywall breakpoint: pause on the pier confession even though this run did not retrieve that paragraph.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 3,
+                  "end_para": 3
+                }
+              }
+            ],
+            "confidence": 0.75,
+            "is_inferred": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 650,
+      "completion_tokens": 120,
+      "total_tokens": 770
+    }
+  },
+  "fixture": true
+}

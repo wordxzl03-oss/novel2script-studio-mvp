@@ -1,0 +1,52 @@
+{
+  "response": {
+    "content": {
+      "points": [
+        {
+          "point_id": "RP001",
+          "kind": "hook",
+          "description": "Suggested retention point: keep the opening on Mira finding the sealed letter because it immediately raises why she must reopen the case.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.84,
+            "is_inferred": false
+          }
+        },
+        {
+          "point_id": "RP002",
+          "kind": "paywall",
+          "description": "Suggested paywall breakpoint: pause after Rowan is tied to the hidden archive letter and before the pier confession resolves the proof.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 3
+                }
+              }
+            ],
+            "confidence": 0.78,
+            "is_inferred": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 690,
+      "completion_tokens": 210,
+      "total_tokens": 900
+    }
+  },
+  "fixture": true
+}
