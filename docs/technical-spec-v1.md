@@ -377,6 +377,35 @@ evidence fails the task.
 visual placement, retention UI, conversion guarantees, API routes, persistence,
 forks, or fidelity review.
 
+### 4.2.7 W3 end-to-end replay contract
+
+PR-308 closes W3 with a replay-only integration path that connects the W2
+evidence base to the W3 episode chain:
+
+1. `chunk_novel(source_novel, registry)` fills an in-memory `EvidenceStore`
+   with `source_type="novel"` chunks, and the store already contains indexed
+   `source_type="story_bible"` evidence.
+2. `EpisodePlannerAgent.run(project_id, series)` consumes novel and story-bible
+   evidence, produces a successful `AgentRun`, and writes 10
+   `EpisodeOutline` objects to `Series.outlines`.
+3. `EpisodeWriterAgent.run(project_id, series, max_episodes=3)` consumes the
+   first three outlines, runs `EpisodeScriptTask` once per outline, and writes
+   three validated `Episode` objects to `Series.episodes`.
+4. `RetentionPointTask(episode=episode).run(...)` runs once per generated
+   episode, and `attach_retention_points(episode, plan)` writes each successful
+   `RetentionPlan.points` list back to that episode.
+
+This contract is covered by `backend/tests/test_w3_end_to_end.py`. The test
+must pass with `DEMO_MODE=1` and without `LLM_API_KEY`, `LLM_BASE_URL`, or
+`LLM_MODEL`; it also blocks live HTTP calls. Fixture recordings provide replay
+usage for validation only. Replay usage is not a cost signal.
+
+The validation order remains retrieval -> structured generation -> schema
+parse -> source-validation/citation consistency -> short-drama linter for
+Episode and EpisodeOutline tasks. PR-308 does not add project persistence,
+API routes, UI/workbench behavior, rewrite/diff flows, forks, export tooling,
+or W7 retention visualization.
+
 ### 4.3 导出不是 Agent
 
 F28 开发包导出是确定性汇总流程:
