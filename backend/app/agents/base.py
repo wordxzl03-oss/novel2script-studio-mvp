@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -27,6 +27,7 @@ class AgentRun(StrictAgentModel):
     target_id: str = Field(min_length=1)
     steps: list[AgentStep] = Field(default_factory=list)
     final_output_ref: str | None = None
+    output: Any | None = None
     status: AgentRunStatus
 
 
