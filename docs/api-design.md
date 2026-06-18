@@ -55,3 +55,62 @@ generation. The W2 path is internal and replay-testable: callers provide a
 External API design for these agents is deferred until project storage exists,
 so W2 does not introduce request/response contracts that would imply persisted
 project IDs or user-facing generation state.
+
+## W4 V1 Stateless Project API
+
+W4 introduces the first frontend-facing V1 endpoints. The server still does not
+own project storage: the frontend holds a full `ProjectState` JSON document and
+posts it back for each action. Every endpoint returns the updated `ProjectState`.
+
+`ProjectState`:
+
+```json
+{
+  "project_id": "project:...",
+  "novel": { "...": "SourceNovel JSON" },
+  "registry": { "...": "Registry JSON" },
+  "evidence_store": { "chunks": [] },
+  "series": null,
+  "ip_diagnosis": null,
+  "story_bible": null
+}
+```
+
+### `POST /api/v1/project/bootstrap`
+
+Request:
+
+```json
+{
+  "novel_text": "plain novel text",
+  "title": "Harbor Case",
+  "registry": { "...": "optional Registry JSON" },
+  "profile_id": "female_revenge_vertical"
+}
+```
+
+Behavior:
+
+- Splits plain text into `SourceNovel` chapters with deterministic chapter IDs.
+- Uses the supplied `registry`, or runs the legacy global scan when no registry
+  is supplied.
+- Builds an in-memory `EvidenceStore` with `chunk_novel`.
+- Returns an initial `ProjectState` with serialized `evidence_store`.
+
+### `POST /api/v1/diagnose`
+
+Request body is top-level `ProjectState` plus optional action field
+`profile_id`. The endpoint rebuilds `EvidenceStore` from
+`ProjectState.evidence_store`, runs `DiagnosisAgent`, writes
+`ip_diagnosis`, and returns `ProjectState`.
+
+### `POST /api/v1/story-bible`
+
+Request body is top-level `ProjectState` plus optional action field
+`existing_bible`. The endpoint rebuilds `EvidenceStore`, runs
+`StoryBibleAgent`, writes `story_bible`, indexes story-bible chunks back into
+`evidence_store`, and returns `ProjectState`.
+
+All V1 endpoints are stateless. They do not create sessions, write a database,
+or depend on a `ProjectStore`. `DEMO_MODE=1` uses replay recordings and live
+mode continues to use the server-side LLM configuration and rate limit.

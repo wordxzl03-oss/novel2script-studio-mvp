@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+import hashlib
 import os
 from pathlib import Path
 from typing import Any, Literal
@@ -9,13 +10,26 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 
+from app.agents.diagnosis_agent import DiagnosisAgent
+from app.agents.story_bible_agent import StoryBibleAgent
+from app.api.project_state import ProjectState
 from app.core.rate_limit import InMemoryRateLimiter, RateLimitExceeded
 from app.llm.client import LLMClient
-from app.pipeline.chapter_splitter import split_novel_text
+from app.pipeline.chapter_splitter import SplitChapter, split_chapters, split_novel_text
 from app.pipeline.global_scan import run_global_scan
 from app.pipeline.scene_generator import generate_screenplay
+from app.rag.chunker import chunk_novel
 from app.rag.evidence_store import EvidenceStore
-from app.schema.short_drama import Episode
+from app.schema.short_drama import (
+    Episode,
+    IPDiagnosis,
+    Registry,
+    RegistryCharacter,
+    RegistryLocation,
+    SourceChapter,
+    SourceNovel,
+    StoryBible,
+)
 from app.validation.highlight import compute_compression_view, compute_highlight_anchors
 
 router = APIRouter()
@@ -47,6 +61,27 @@ class HighlightPreviewRequest(BaseModel):
 
     episode: Episode
     evidence_store: dict[str, Any]
+
+
+class BootstrapProjectRequest(BaseModel):
+    """Create the initial frontend-held V1 project state."""
+
+    novel_text: str = Field(..., min_length=1)
+    title: str = Field(default="Untitled Project", min_length=1)
+    registry: Registry | None = None
+    profile_id: str | None = None
+
+
+class DiagnoseProjectRequest(ProjectState):
+    """ProjectState plus action-only fields for IP diagnosis."""
+
+    profile_id: str | None = None
+
+
+class StoryBibleProjectRequest(ProjectState):
+    """ProjectState plus action-only fields for story bible generation."""
+
+    existing_bible: StoryBible | None = None
 
 
 def get_llm_client() -> LLMClient:
@@ -131,6 +166,103 @@ def highlight_preview_api(
     }
 
 
+@router.post("/v1/project/bootstrap", response_model=ProjectState)
+def bootstrap_project_api(
+    request: BootstrapProjectRequest,
+    raw_request: Request,
+    rate_limiter: InMemoryRateLimiter = Depends(get_rate_limiter),
+) -> ProjectState:
+    try:
+        chapters = split_chapters(request.novel_text, min_chapters=1)
+        novel = _source_novel_from_chapters(
+            title=request.title,
+            chapters=chapters,
+        )
+        registry = request.registry or _scan_registry_for_bootstrap(
+            chapters=chapters,
+            raw_request=raw_request,
+            rate_limiter=rate_limiter,
+        )
+        store = EvidenceStore()
+        store.add_chunks(chunk_novel(novel, registry=registry))
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={"error": exc.__class__.__name__, "message": str(exc)},
+        ) from exc
+
+    return ProjectState(
+        project_id=_stable_project_id(request.title, request.novel_text),
+        novel=novel,
+        registry=registry,
+        evidence_store=store.to_json(),
+    )
+
+
+@router.post("/v1/diagnose", response_model=ProjectState)
+def diagnose_project_api(
+    request: DiagnoseProjectRequest,
+    raw_request: Request,
+    client: LLMClient = Depends(get_llm_client),
+    rate_limiter: InMemoryRateLimiter = Depends(get_rate_limiter),
+) -> ProjectState:
+    _check_rate_limit(raw_request, client, rate_limiter)
+    state = _project_state_from_action_request(request, exclude={"profile_id"})
+    store = EvidenceStore.from_json(state.evidence_store)
+    profile_ids = [] if client.mode == "replay" else _profile_id_list(request.profile_id)
+
+    run = DiagnosisAgent(
+        store=store,
+        llm_client=client,
+        profile_ids=profile_ids,
+    ).run(
+        project_id=state.project_id,
+        source_novel=state.novel,
+        registry=state.registry,
+    )
+
+    if run.status != "success" or not isinstance(run.output, IPDiagnosis):
+        raise _agent_failed("diagnosis", run)
+
+    return state.model_copy(
+        update={
+            "ip_diagnosis": run.output,
+            "evidence_store": store.to_json(),
+        }
+    )
+
+
+@router.post("/v1/story-bible", response_model=ProjectState)
+def story_bible_project_api(
+    request: StoryBibleProjectRequest,
+    raw_request: Request,
+    client: LLMClient = Depends(get_llm_client),
+    rate_limiter: InMemoryRateLimiter = Depends(get_rate_limiter),
+) -> ProjectState:
+    _check_rate_limit(raw_request, client, rate_limiter)
+    state = _project_state_from_action_request(request, exclude={"existing_bible"})
+    store = EvidenceStore.from_json(state.evidence_store)
+
+    run = StoryBibleAgent(store=store, llm_client=client).run(
+        project_id=state.project_id,
+        source_novel=state.novel,
+        registry=state.registry,
+        existing_bible=request.existing_bible or state.story_bible,
+    )
+
+    if run.status != "success" or not isinstance(run.output, StoryBible):
+        raise _agent_failed("story_bible", run)
+
+    return state.model_copy(
+        update={
+            "story_bible": run.output,
+            "evidence_store": store.to_json(),
+        }
+    )
+
+
 @router.post("/generate", response_model=GenerateResponse)
 def generate_screenplay_api(
     request: GenerateRequest,
@@ -188,6 +320,99 @@ def generate_screenplay_api(
         },
         lint_findings=[finding.to_dict() for finding in generation.lint_findings],
         metrics=asdict(generation.metrics),
+    )
+
+
+def _source_novel_from_chapters(
+    *,
+    title: str,
+    chapters: list[SplitChapter],
+) -> SourceNovel:
+    return SourceNovel(
+        novel_id="N001",
+        title=title,
+        chapters=[
+            SourceChapter(
+                chapter_id=chapter.chapter_id,
+                title=chapter.title,
+                paragraphs=chapter.paragraphs(),
+            )
+            for chapter in chapters
+        ],
+    )
+
+
+def _scan_registry_for_bootstrap(
+    *,
+    chapters: list[SplitChapter],
+    raw_request: Request,
+    rate_limiter: InMemoryRateLimiter,
+) -> Registry:
+    client = get_llm_client()
+    _check_rate_limit(raw_request, client, rate_limiter)
+    scan = run_global_scan(client, chapters)
+    return Registry(
+        characters=[
+            RegistryCharacter(
+                character_id=character.character_id,
+                name=character.name,
+                aliases=character.aliases,
+                description=character.description,
+            )
+            for character in scan.characters
+        ],
+        locations=[
+            RegistryLocation(
+                location_id=location.location_id,
+                name=location.name,
+                aliases=location.aliases,
+                description=location.description,
+            )
+            for location in scan.locations
+        ],
+        relationship_map=[],
+    )
+
+
+def _project_state_from_action_request(
+    request: ProjectState,
+    *,
+    exclude: set[str],
+) -> ProjectState:
+    return ProjectState.model_validate(request.model_dump(mode="json", exclude=exclude))
+
+
+def _stable_project_id(title: str, novel_text: str) -> str:
+    digest = hashlib.sha256(f"{title}\n{novel_text}".encode("utf-8")).hexdigest()
+    return f"project:{digest[:12]}"
+
+
+def _profile_id_list(profile_id: str | None) -> list[str]:
+    if profile_id is None:
+        return []
+    cleaned = profile_id.strip()
+    return [cleaned] if cleaned else []
+
+
+def _check_rate_limit(
+    request: Request,
+    client: LLMClient,
+    rate_limiter: InMemoryRateLimiter,
+) -> None:
+    try:
+        rate_limiter.check(_rate_limit_subject(request), llm_mode=client.mode)
+    except RateLimitExceeded as exc:
+        raise HTTPException(status_code=429, detail=exc.to_detail()) from exc
+
+
+def _agent_failed(agent_name: str, run: Any) -> HTTPException:
+    return HTTPException(
+        status_code=400,
+        detail={
+            "error": f"{agent_name}_agent_failed",
+            "status": run.status,
+            "steps": jsonable_encoder(run.steps),
+        },
     )
 
 
