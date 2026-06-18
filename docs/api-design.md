@@ -114,3 +114,38 @@ Request body is top-level `ProjectState` plus optional action field
 All V1 endpoints are stateless. They do not create sessions, write a database,
 or depend on a `ProjectStore`. `DEMO_MODE=1` uses replay recordings and live
 mode continues to use the server-side LLM configuration and rate limit.
+
+### `POST /api/v1/plan`
+
+Request body is top-level `ProjectState` plus optional action field
+`profile_id`. The endpoint rebuilds `EvidenceStore`, ensures there is a valid
+`Series` container, loads the selected short-drama profile, runs
+`EpisodePlannerAgent`, writes `series.outlines`, and returns `ProjectState`.
+
+When `ProjectState.series` is missing, the endpoint creates a deterministic
+placeholder series with `series_id` `SRS001`. The placeholder episode only
+keeps the V1 `Series` schema valid until the write step replaces it.
+
+### `POST /api/v1/write`
+
+Request body is top-level `ProjectState` plus optional action fields
+`profile_id` and `max_episodes`. `max_episodes` defaults to 3 and is capped at
+10. The endpoint rebuilds `EvidenceStore`, runs `EpisodeWriterAgent`, writes
+`series.episodes`, then runs `RetentionPointTask` for the generated episodes and
+attaches `retention_points` when validation passes.
+
+### `POST /api/v1/episode-highlight`
+
+Request body is top-level `ProjectState` plus `episode_number`. The endpoint is
+the project-scoped convenience wrapper around `/api/highlight-preview`: it
+finds the selected episode in `ProjectState.series`, rebuilds `EvidenceStore`,
+and returns:
+
+```json
+{
+  "highlight_anchors": [],
+  "compression_view": []
+}
+```
+
+This endpoint does not call an LLM and does not mutate project state.

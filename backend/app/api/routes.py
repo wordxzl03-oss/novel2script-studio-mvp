@@ -11,29 +11,40 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 
 from app.agents.diagnosis_agent import DiagnosisAgent
+from app.agents.episode_planner_agent import EpisodePlannerAgent
+from app.agents.episode_writer_agent import EpisodeWriterAgent
 from app.agents.story_bible_agent import StoryBibleAgent
+from app.ai.tasks.retention_points import RetentionPointTask, attach_retention_points
 from app.api.project_state import ProjectState
 from app.core.rate_limit import InMemoryRateLimiter, RateLimitExceeded
 from app.llm.client import LLMClient
 from app.pipeline.chapter_splitter import SplitChapter, split_chapters, split_novel_text
 from app.pipeline.global_scan import run_global_scan
 from app.pipeline.scene_generator import generate_screenplay
+from app.profiles.loader import ProfileLoadError, ShortDramaProfile, load_profile
 from app.rag.chunker import chunk_novel
 from app.rag.evidence_store import EvidenceStore
+from app.rag.retriever import build_retrieval_context, source_ranges_of
+from app.rag.types import RetrievalContext
 from app.schema.short_drama import (
     Episode,
     IPDiagnosis,
     Registry,
     RegistryCharacter,
     RegistryLocation,
+    RetentionPlan,
+    Series,
     SourceChapter,
+    SourceLink,
     SourceNovel,
+    SourceRange,
     StoryBible,
 )
 from app.validation.highlight import compute_compression_view, compute_highlight_anchors
 
 router = APIRouter()
 _rate_limiter: InMemoryRateLimiter | None = None
+DEFAULT_PROFILE_ID = "female_revenge_vertical"
 
 
 class GenerateRequest(BaseModel):
@@ -82,6 +93,25 @@ class StoryBibleProjectRequest(ProjectState):
     """ProjectState plus action-only fields for story bible generation."""
 
     existing_bible: StoryBible | None = None
+
+
+class PlanProjectRequest(ProjectState):
+    """ProjectState plus action-only fields for episode planning."""
+
+    profile_id: str | None = None
+
+
+class WriteProjectRequest(ProjectState):
+    """ProjectState plus action-only fields for episode writing."""
+
+    profile_id: str | None = None
+    max_episodes: int = Field(default=3, ge=0, le=10)
+
+
+class EpisodeHighlightRequest(ProjectState):
+    """ProjectState plus an episode selector for highlight data."""
+
+    episode_number: int = Field(ge=1)
 
 
 def get_llm_client() -> LLMClient:
@@ -263,6 +293,108 @@ def story_bible_project_api(
     )
 
 
+@router.post("/v1/plan", response_model=ProjectState)
+def plan_project_api(
+    request: PlanProjectRequest,
+    raw_request: Request,
+    client: LLMClient = Depends(get_llm_client),
+    rate_limiter: InMemoryRateLimiter = Depends(get_rate_limiter),
+) -> ProjectState:
+    _check_rate_limit(raw_request, client, rate_limiter)
+    state = _project_state_from_action_request(request, exclude={"profile_id"})
+    store = EvidenceStore.from_json(state.evidence_store)
+    profile = _load_profile_or_400(request.profile_id)
+    series = _series_for_state(state)
+
+    run = EpisodePlannerAgent(
+        store=store,
+        registry=state.registry,
+        profile=profile,
+        llm_client=client,
+    ).run(project_id=state.project_id, series=series)
+
+    if run.status != "success":
+        raise _agent_failed("episode_planner", run)
+
+    return state.model_copy(
+        update={
+            "series": series,
+            "evidence_store": store.to_json(),
+        }
+    )
+
+
+@router.post("/v1/write", response_model=ProjectState)
+def write_project_api(
+    request: WriteProjectRequest,
+    raw_request: Request,
+    client: LLMClient = Depends(get_llm_client),
+    rate_limiter: InMemoryRateLimiter = Depends(get_rate_limiter),
+) -> ProjectState:
+    _check_rate_limit(raw_request, client, rate_limiter)
+    state = _project_state_from_action_request(
+        request,
+        exclude={"profile_id", "max_episodes"},
+    )
+    store = EvidenceStore.from_json(state.evidence_store)
+    profile = _load_profile_or_400(request.profile_id)
+    series = _series_for_state(state)
+
+    run = EpisodeWriterAgent(
+        store=store,
+        registry=state.registry,
+        profile=profile,
+        llm_client=client,
+    ).run(
+        project_id=state.project_id,
+        series=series,
+        max_episodes=request.max_episodes,
+    )
+
+    if run.status != "success":
+        raise _agent_failed("episode_writer", run)
+
+    _attach_retention_points(
+        project_id=state.project_id,
+        series=series,
+        store=store,
+        client=client,
+    )
+
+    return state.model_copy(
+        update={
+            "series": series,
+            "evidence_store": store.to_json(),
+        }
+    )
+
+
+@router.post("/v1/episode-highlight")
+def episode_highlight_api(
+    request: EpisodeHighlightRequest,
+) -> dict[str, Any]:
+    state = _project_state_from_action_request(request, exclude={"episode_number"})
+    if state.series is None:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "missing_series",
+                "message": "ProjectState.series is required for episode highlight.",
+            },
+        )
+
+    episode = _episode_by_number(state.series, request.episode_number)
+    store = EvidenceStore.from_json(state.evidence_store)
+    return {
+        "highlight_anchors": jsonable_encoder(
+            compute_highlight_anchors(episode, store)
+        ),
+        "compression_view": jsonable_encoder(
+            compute_compression_view(episode, store)
+        ),
+    }
+
+
 @router.post("/generate", response_model=GenerateResponse)
 def generate_screenplay_api(
     request: GenerateRequest,
@@ -385,6 +517,160 @@ def _project_state_from_action_request(
 def _stable_project_id(title: str, novel_text: str) -> str:
     digest = hashlib.sha256(f"{title}\n{novel_text}".encode("utf-8")).hexdigest()
     return f"project:{digest[:12]}"
+
+
+def _load_profile_or_400(profile_id: str | None) -> ShortDramaProfile:
+    selected_profile_id = (profile_id or DEFAULT_PROFILE_ID).strip()
+    try:
+        return load_profile(selected_profile_id)
+    except ProfileLoadError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "profile_load_error",
+                "message": str(exc),
+            },
+        ) from exc
+
+
+def _series_for_state(state: ProjectState) -> Series:
+    if state.series is not None:
+        return state.series
+
+    return Series.model_validate(
+        {
+            "series_id": "SRS001",
+            "title": state.novel.title,
+            "episodes": [_placeholder_episode(state).model_dump(mode="json")],
+            "outlines": [],
+        }
+    )
+
+
+def _placeholder_episode(state: ProjectState) -> Episode:
+    source_link = _first_source_link(state.novel)
+    return Episode.model_validate(
+        {
+            "episode_id": "E000",
+            "number": 1,
+            "title": "Placeholder",
+            "logline": "Placeholder before replay writes real episodes.",
+            "opening_hook": "Placeholder hook.",
+            "main_conflict": "Placeholder conflict.",
+            "emotional_payoff": "Placeholder payoff.",
+            "cliffhanger": "Placeholder cliffhanger.",
+            "source_ranges": [source_link.model_dump(mode="json")],
+            "scenes": [
+                {
+                    "scene_id": "SC000",
+                    "source_links": [source_link.model_dump(mode="json")],
+                    "beats": [
+                        {
+                            "beat_id": "B000",
+                            "elements": [
+                                {
+                                    "element_id": "EL000",
+                                    "type": "action",
+                                    "text": "Placeholder action.",
+                                    "source_links": [source_link.model_dump(mode="json")],
+                                }
+                            ],
+                        }
+                    ],
+                }
+            ],
+        }
+    )
+
+
+def _first_source_link(source_novel: SourceNovel) -> SourceLink:
+    first_chapter = source_novel.chapters[0]
+    return SourceLink(
+        type="source_based",
+        source_range=SourceRange(
+            chapter_id=first_chapter.chapter_id,
+            start_para=1,
+            end_para=1,
+        ),
+    )
+
+
+def _attach_retention_points(
+    *,
+    project_id: str,
+    series: Series,
+    store: EvidenceStore,
+    client: LLMClient,
+) -> None:
+    for episode in series.episodes:
+        result = RetentionPointTask(episode=episode, llm_client=client).run(
+            _retention_context_for_episode(
+                episode=episode,
+                store=store,
+                series=series,
+            ),
+            store,
+        )
+        if (
+            result.task_run.validation_report.passed
+            and isinstance(result.output, RetentionPlan)
+        ):
+            attach_retention_points(episode, result.output)
+            continue
+
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "retention_points_failed",
+                "project_id": project_id,
+                "episode_number": episode.number,
+                "validation_report": jsonable_encoder(
+                    result.task_run.validation_report
+                ),
+            },
+        )
+
+
+def _retention_context_for_episode(
+    *,
+    episode: Episode,
+    store: EvidenceStore,
+    series: Series,
+) -> RetrievalContext:
+    return build_retrieval_context(
+        task_name="retention_points",
+        query=f"mark retention points for episode {episode.number}",
+        store=store,
+        source_ranges=source_ranges_of(episode),
+        filters={
+            "event_tags": ["story_bible"],
+            "episode_number": episode.number,
+        },
+        profile_context={
+            "series": {
+                "series_id": series.series_id,
+                "title": series.title,
+            },
+            "episode": {
+                "episode_id": episode.episode_id,
+                "number": episode.number,
+            },
+        },
+    )
+
+
+def _episode_by_number(series: Series, episode_number: int) -> Episode:
+    for episode in series.episodes:
+        if episode.number == episode_number:
+            return episode
+
+    raise HTTPException(
+        status_code=404,
+        detail={
+            "error": "episode_not_found",
+            "message": f"Episode not found: {episode_number}",
+        },
+    )
 
 
 def _profile_id_list(profile_id: str | None) -> list[str]:
