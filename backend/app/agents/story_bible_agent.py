@@ -190,6 +190,7 @@ class StoryBibleAgent(BoundedAgent):
             target_id=source_novel.novel_id,
             steps=steps,
             final_output_ref=f"story_bible:{task_result.task_run.task_id}",
+            output=final_bible,
             status="success",
         )
 
