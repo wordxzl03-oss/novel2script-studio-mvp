@@ -6,7 +6,7 @@ from app.agents.base import AgentRun, AgentStep, BoundedAgent
 from app.ai.tasks.ip_diagnosis import IPDiagnosisTask
 from app.rag.evidence_store import EvidenceStore
 from app.rag.retriever import EmptyRetrievalError, build_retrieval_context
-from app.schema.short_drama import Registry, SourceNovel, SourceRange
+from app.schema.short_drama import IPDiagnosis, Registry, SourceNovel, SourceRange
 
 
 class DiagnosisAgent(BoundedAgent):
@@ -100,6 +100,7 @@ class DiagnosisAgent(BoundedAgent):
         task = IPDiagnosisTask(llm_client=self.llm_client)
         task_result = task.run(retrieval_context, self.store)
         task_passed = task_result.task_run.validation_report.passed
+        output = task_result.output if isinstance(task_result.output, IPDiagnosis) else None
         run_step_status = "success" if task_passed else "failed"
         steps.append(
             AgentStep(
@@ -132,6 +133,7 @@ class DiagnosisAgent(BoundedAgent):
                 if task_passed
                 else None
             ),
+            output=output if task_passed else None,
             status="success" if task_passed else "failed",
         )
 
