@@ -1,16 +1,36 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import AdaptationGraph from "../components/AdaptationGraph.jsx";
+import CompressionView from "../components/CompressionView.jsx";
 import ModeTabs from "../components/ModeTabs.jsx";
+import SourceBadge from "../components/SourceBadge.jsx";
+import SourceHighlight from "../components/SourceHighlight.jsx";
 import SplitPane from "../components/SplitPane.jsx";
 import { resetPaneWidths } from "../components/splitPaneModel.js";
 import { buildMainlineNodes, resolveWorkbenchSelection } from "./workbenchModel.js";
+import {
+  findWrittenEpisode,
+  flattenEpisodeElements,
+  sourceTargetForBadge
+} from "./provenanceModel.js";
 
-export default function Workbench({ project, episodeNumber, onBack }) {
+const EMPTY_HIGHLIGHT_DATA = {
+  highlight_anchors: [],
+  compression_view: [],
+  element_badges: []
+};
+
+export default function Workbench({ api, project, episodeNumber, onBack }) {
   const nodes = useMemo(() => buildMainlineNodes(project), [project]);
   const [mode, setMode] = useState("compare");
   const [widths, setWidths] = useState(resetPaneWidths);
   const [collapsed, setCollapsed] = useState({});
+  const [sourceView, setSourceView] = useState("text");
+  const [focusedRange, setFocusedRange] = useState(null);
+  const [badgeNotice, setBadgeNotice] = useState("");
+  const [highlightData, setHighlightData] = useState(EMPTY_HIGHLIGHT_DATA);
+  const [highlightStatus, setHighlightStatus] = useState("idle");
+  const [highlightError, setHighlightError] = useState("");
   const [selection, setSelection] = useState(() =>
     resolveWorkbenchSelection(nodes, episodeNumber || 1)
   );
@@ -27,9 +47,49 @@ export default function Workbench({ project, episodeNumber, onBack }) {
 
   const selectedNode =
     nodes.find((node) => node.id === selection.nodeId) || nodes[0];
+  const selectedEpisode = findWrittenEpisode(project, selection.episodeNumber);
+  const scriptRows = useMemo(() => {
+    const rows = flattenEpisodeElements(selectedEpisode, highlightData.element_badges);
+    return selection.sceneId
+      ? rows.filter((row) => row.sceneId === selection.sceneId)
+      : rows;
+  }, [highlightData.element_badges, selectedEpisode, selection.sceneId]);
   const selectedLabel = selectedNode
     ? `${selectedNode.label} / ${selectedNode.title}`
     : "E01 / Episode 1";
+
+  useEffect(() => {
+    let cancelled = false;
+    setFocusedRange(null);
+    setBadgeNotice("");
+    setHighlightError("");
+
+    if (!api || !project || !selectedEpisode) {
+      setHighlightData(EMPTY_HIGHLIGHT_DATA);
+      setHighlightStatus("idle");
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setHighlightStatus("loading");
+    api.getEpisodeHighlight(project, selectedEpisode.number)
+      .then((data) => {
+        if (cancelled) return;
+        setHighlightData({ ...EMPTY_HIGHLIGHT_DATA, ...data });
+        setHighlightStatus("ready");
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setHighlightData(EMPTY_HIGHLIGHT_DATA);
+        setHighlightError(error?.message || "Highlight data could not be loaded.");
+        setHighlightStatus("error");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [api, project, selectedEpisode]);
 
   function togglePane(paneId) {
     setCollapsed((current) => {
@@ -45,6 +105,22 @@ export default function Workbench({ project, episodeNumber, onBack }) {
       sceneId: node.sceneId,
       nodeId: node.id
     });
+  }
+
+  function activateBadge(badge) {
+    const target = sourceTargetForBadge(badge);
+    if (target) {
+      setSourceView("text");
+      setFocusedRange(target);
+      setBadgeNotice("");
+      return;
+    }
+    setBadgeNotice(badge?.reason || "This script element has no verified source range.");
+  }
+
+  function selectCompressionRange(target) {
+    setSourceView("text");
+    setFocusedRange(target);
   }
 
   const panes = [
@@ -66,14 +142,33 @@ export default function Workbench({ project, episodeNumber, onBack }) {
       label: "Source",
       kicker: "Original text",
       tone: "paper",
-      content: <ContextPlaceholder type="source" selectedLabel={selectedLabel} />
+      content: (
+        <SourcePanel
+          data={highlightData}
+          error={highlightError}
+          focusedRange={focusedRange}
+          novel={project?.novel}
+          sourceView={sourceView}
+          status={highlightStatus}
+          onSelectRange={selectCompressionRange}
+          onViewChange={setSourceView}
+        />
+      )
     },
     {
       id: "script",
       label: "Script",
       kicker: "Episode draft",
       tone: "paper",
-      content: <ContextPlaceholder type="script" selectedLabel={selectedLabel} />
+      content: (
+        <ScriptProvenance
+          badgeNotice={badgeNotice}
+          rows={scriptRows}
+          selectedLabel={selectedLabel}
+          status={highlightStatus}
+          onActivateBadge={activateBadge}
+        />
+      )
     }
   ];
 
@@ -110,14 +205,100 @@ export default function Workbench({ project, episodeNumber, onBack }) {
   );
 }
 
-function ContextPlaceholder({ type, selectedLabel }) {
+function SourcePanel({
+  data,
+  error,
+  focusedRange,
+  novel,
+  sourceView,
+  status,
+  onSelectRange,
+  onViewChange
+}) {
+  if (status === "loading") return <PanelStatus text="Loading source evidence..." />;
+  if (status === "error") return <PanelStatus text={error} tone="error" />;
+  if (status === "idle") return <PanelStatus text="Source evidence is available for written episodes." />;
+
   return (
-    <div className="context-placeholder">
-      <span>{type === "source" ? "Source context" : "Script context"}</span>
-      <strong>{selectedLabel}</strong>
-      <p>{type === "source" ? "No source passage selected." : "No script block selected."}</p>
+    <div className="source-panel">
+      <div className="source-view-tabs" role="tablist" aria-label="Source evidence view">
+        <button
+          aria-selected={sourceView === "text"}
+          className={sourceView === "text" ? "active" : ""}
+          role="tab"
+          type="button"
+          onClick={() => onViewChange("text")}
+        >
+          Source text
+        </button>
+        <button
+          aria-selected={sourceView === "compression"}
+          className={sourceView === "compression" ? "active" : ""}
+          role="tab"
+          type="button"
+          onClick={() => onViewChange("compression")}
+        >
+          Compression basis
+        </button>
+      </div>
+      {sourceView === "text" ? (
+        <SourceHighlight
+          anchors={data.highlight_anchors}
+          focusedRange={focusedRange}
+          novel={novel}
+        />
+      ) : (
+        <CompressionView items={data.compression_view} onSelectRange={onSelectRange} />
+      )}
     </div>
   );
+}
+
+function ScriptProvenance({
+  badgeNotice,
+  rows,
+  selectedLabel,
+  status,
+  onActivateBadge
+}) {
+  if (status === "loading") return <PanelStatus text="Loading script provenance..." />;
+  if (status === "idle") return <PanelStatus text="Script provenance is available for written episodes." />;
+  if (status === "error") return <PanelStatus text="Script provenance could not be loaded." tone="error" />;
+
+  return (
+    <div className="script-provenance">
+      <header className="script-provenance__title">
+        <span>Backend-verified sources</span>
+        <strong>{selectedLabel}</strong>
+      </header>
+      {badgeNotice && <div className="badge-notice">{badgeNotice}</div>}
+      {rows.length > 0 ? rows.map((row) => (
+        <article
+          className="provenance-row"
+          key={`${row.sceneId}-${row.beatId}-${row.element.element_id}`}
+        >
+          <header>
+            <span>{row.sceneId} / {row.beatId}</span>
+            <strong>{row.element.type}</strong>
+          </header>
+          <p>{row.element.text}</p>
+          <div className="element-badges">
+            {row.badges.map((badge, index) => (
+              <SourceBadge
+                badge={badge}
+                key={`${row.element.element_id}-${index}`}
+                onActivate={onActivateBadge}
+              />
+            ))}
+          </div>
+        </article>
+      )) : <div className="provenance-empty">No script elements match this selection.</div>}
+    </div>
+  );
+}
+
+function PanelStatus({ text, tone = "neutral" }) {
+  return <div className={`provenance-status tone-${tone}`}>{text}</div>;
 }
 
 function ModePlaceholder({ mode, selectedLabel }) {

@@ -95,6 +95,8 @@ def test_episode_highlight_endpoint_returns_anchors_and_compression(monkeypatch)
     assert data["compression_view"][0]["resolved_text"] == (
         "Mira finds a sealed letter and decides to reopen the case."
     )
+    assert data["element_badges"]
+    assert all(item["badges"] for item in data["element_badges"])
 
 
 def planned_state(client: TestClient) -> dict:
