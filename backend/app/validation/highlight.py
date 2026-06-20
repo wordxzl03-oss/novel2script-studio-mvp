@@ -44,6 +44,38 @@ def compute_highlight_anchors(
     return anchors
 
 
+def compute_element_badges(
+    episode: Episode, store: EvidenceStore
+) -> list[dict[str, Any]]:
+    elements: list[dict[str, Any]] = []
+    for scene in episode.scenes:
+        for beat in scene.beats:
+            for element in beat.elements:
+                badges = [
+                    _badge_payload(source_link, store)
+                    for source_link in element.source_links
+                ]
+                if not badges:
+                    badges = [
+                        {
+                            "badge_state": "unverified",
+                            "source_link": None,
+                            "chapter_id": None,
+                            "para_range": None,
+                            "reason": "No source link was provided.",
+                        }
+                    ]
+                elements.append(
+                    {
+                        "scene_id": scene.scene_id,
+                        "beat_id": beat.beat_id,
+                        "element_id": element.element_id,
+                        "badges": badges,
+                    }
+                )
+    return elements
+
+
 def compute_compression_view(
     episode: Episode, store: EvidenceStore
 ) -> list[dict[str, Any]]:
@@ -56,3 +88,22 @@ def compute_compression_view(
             }
         )
     return view
+
+
+def _badge_payload(source_link: SourceLink, store: EvidenceStore) -> dict[str, Any]:
+    verdict = validate_source_link(source_link, store)
+    source_range = source_link.source_range
+    reason = source_link.reason
+    if reason is None and verdict.finding is not None:
+        reason = verdict.finding.message
+    return {
+        "badge_state": derive_badge_state(verdict, source_link),
+        "source_link": source_link,
+        "chapter_id": source_range.chapter_id if source_range is not None else None,
+        "para_range": (
+            (source_range.start_para, source_range.end_para)
+            if source_range is not None
+            else None
+        ),
+        "reason": reason,
+    }

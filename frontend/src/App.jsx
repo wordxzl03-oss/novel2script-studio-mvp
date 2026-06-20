@@ -95,6 +95,7 @@ function WorkbenchShell() {
         />
       ) : (
         <Workbench
+          api={api}
           episodeNumber={state.selectedEpisodeNumber}
           project={state.project}
           onBack={() => dispatch({ type: "view/show-board" })}

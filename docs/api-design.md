@@ -37,6 +37,22 @@ Response:
       "source_type": "source_based",
       "text_excerpt": "source text"
     }
+  ],
+  "element_badges": [
+    {
+      "scene_id": "SC001",
+      "beat_id": "B001",
+      "element_id": "A001",
+      "badges": [
+        {
+          "badge_state": "literal_ok",
+          "source_link": {},
+          "chapter_id": "CH001",
+          "para_range": [1, 1],
+          "reason": null
+        }
+      ]
+    }
   ]
 }
 ```
@@ -144,8 +160,12 @@ and returns:
 ```json
 {
   "highlight_anchors": [],
-  "compression_view": []
+  "compression_view": [],
+  "element_badges": []
 }
 ```
 
+`element_badges` contains backend-validated badge states for every script
+element. Elements without source links receive an explicit `unverified` badge;
+the frontend renders these states and never derives them from `source_links`.
 This endpoint does not call an LLM and does not mutate project state.

@@ -40,7 +40,11 @@ from app.schema.short_drama import (
     SourceRange,
     StoryBible,
 )
-from app.validation.highlight import compute_compression_view, compute_highlight_anchors
+from app.validation.highlight import (
+    compute_compression_view,
+    compute_element_badges,
+    compute_highlight_anchors,
+)
 
 router = APIRouter()
 _rate_limiter: InMemoryRateLimiter | None = None
@@ -192,6 +196,9 @@ def highlight_preview_api(
         ),
         "compression_view": jsonable_encoder(
             compute_compression_view(request.episode, store)
+        ),
+        "element_badges": jsonable_encoder(
+            compute_element_badges(request.episode, store)
         ),
     }
 
@@ -391,6 +398,9 @@ def episode_highlight_api(
         ),
         "compression_view": jsonable_encoder(
             compute_compression_view(episode, store)
+        ),
+        "element_badges": jsonable_encoder(
+            compute_element_badges(episode, store)
         ),
     }
 

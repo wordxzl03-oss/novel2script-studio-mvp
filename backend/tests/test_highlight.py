@@ -180,6 +180,51 @@ def test_compression_view_lists_all_sources_in_order():
     assert view[2]["text_excerpt"] is None
 
 
+def test_element_badges_cover_every_script_element():
+    from app.validation.highlight import compute_element_badges
+
+    episode_data = sample_episode().model_dump(mode="json")
+    source_links = episode_data["source_ranges"]
+    episode_data["scenes"][0]["beats"][0]["elements"] = [
+        {
+            "element_id": "A001",
+            "type": "action",
+            "text": "Mira reads the letter.",
+            "source_links": [source_links[0]],
+        },
+        {
+            "element_id": "A002",
+            "type": "action",
+            "text": "Mira crosses the pier.",
+            "source_links": [source_links[1]],
+        },
+        {
+            "element_id": "A003",
+            "type": "action",
+            "text": "A bridge beat connects the scenes.",
+            "source_links": [source_links[2]],
+        },
+        {
+            "element_id": "A004",
+            "type": "action",
+            "text": "This element has no source link.",
+        },
+    ]
+
+    badges = compute_element_badges(Episode.model_validate(episode_data), sample_store())
+
+    assert [item["element_id"] for item in badges] == ["A001", "A002", "A003", "A004"]
+    assert [item["badges"][0]["badge_state"] for item in badges] == [
+        "literal_ok",
+        "source_based",
+        "invented",
+        "unverified",
+    ]
+    assert badges[0]["badges"][0]["para_range"] == (1, 1)
+    assert badges[2]["badges"][0]["reason"] == "Bridge scene for short-drama pacing."
+    assert badges[3]["badges"][0]["source_link"] is None
+
+
 def test_endpoints_are_read_only():
     from app.api.routes import get_llm_client
     from app.main import app
@@ -209,3 +254,4 @@ def test_endpoints_are_read_only():
         "source_based",
         "invented_for_adaptation",
     ]
+    assert payload["element_badges"][0]["element_id"] == "A001"

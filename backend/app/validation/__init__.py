@@ -4,6 +4,7 @@ __all__ = [
     "SourceValidationStepResult",
     "check_citation_consistency",
     "compute_compression_view",
+    "compute_element_badges",
     "compute_highlight_anchors",
     "derive_badge_state",
     "lint_episode",
@@ -20,6 +21,7 @@ def __getattr__(name: str):
         return check_citation_consistency
     if name in {
         "compute_compression_view",
+        "compute_element_badges",
         "compute_highlight_anchors",
         "derive_badge_state",
     }:
