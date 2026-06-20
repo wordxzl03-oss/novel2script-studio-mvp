@@ -161,14 +161,14 @@ h3 {
   font-size: 24px;
 }
 
-.risk-filter {
+.hazard-filter {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
   margin-bottom: var(--space-4);
 }
 
-.risk-filter button {
+.hazard-filter button {
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
@@ -179,13 +179,13 @@ h3 {
   background: var(--paper-panel);
 }
 
-.risk-filter button.active {
+.hazard-filter button.active {
   border-color: var(--paper-accent);
   color: var(--paper-panel);
   background: var(--paper-accent);
 }
 
-.risk-filter strong {
+.hazard-filter strong {
   font-family: var(--font-mono);
   font-size: 12px;
 }
@@ -244,7 +244,7 @@ h3 {
 
 .status-badge,
 .source-summary span,
-.risk-summary span {
+.hazard-summary span {
   border: 1px solid var(--paper-line);
   border-radius: var(--radius-sm);
   padding: 3px 7px;
@@ -319,7 +319,7 @@ h3 {
 }
 
 .source-summary,
-.risk-summary {
+.hazard-summary {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);
@@ -571,3 +571,4 @@ textarea {
     border-right: 0;
   }
 }
+

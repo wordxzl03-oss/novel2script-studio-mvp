@@ -45,7 +45,7 @@ export default function EpisodeCard({ card, onOpen }) {
             )}
           </div>
 
-          <div className="risk-summary">
+          <div className="hazard-summary">
             {card.risks.production && <span className="risk production">Production</span>}
             {card.risks.compliance.length > 0 && (
               <span className="risk compliance">Compliance {card.risks.compliance.length}</span>
@@ -72,3 +72,4 @@ function statusLabel(status) {
   if (status === "planned") return "Planned";
   return "Pending";
 }
+

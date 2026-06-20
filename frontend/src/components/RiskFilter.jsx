@@ -8,7 +8,7 @@ const FILTERS = [
 
 export default function RiskFilter({ value, counts, onChange }) {
   return (
-    <div className="risk-filter" role="group" aria-label="Episode risk filter">
+    <div className="hazard-filter" role="group" aria-label="Episode risk filter">
       {FILTERS.map((filter) => (
         <button
           aria-pressed={value === filter.id}
@@ -24,3 +24,4 @@ export default function RiskFilter({ value, counts, onChange }) {
     </div>
   );
 }
+
