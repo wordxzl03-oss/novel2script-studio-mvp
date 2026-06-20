@@ -47,3 +47,20 @@ test("project reducer records flow errors without using browser storage", () => 
   assert.equal(state.error, "Replay recording is missing");
   assert.equal(state.isRunning, false);
 });
+
+test("project reducer opens an episode in the workbench and returns to the board", () => {
+  const project = { project_id: "project:demo" };
+  let state = { ...initialProjectState, project };
+
+  state = projectReducer(state, {
+    type: "view/open-episode",
+    episodeNumber: 3
+  });
+  assert.equal(state.activeView, "workbench");
+  assert.equal(state.selectedEpisodeNumber, 3);
+  assert.equal(state.project, project);
+
+  state = projectReducer(state, { type: "view/show-board" });
+  assert.equal(state.activeView, "board");
+  assert.equal(state.selectedEpisodeNumber, 3);
+});

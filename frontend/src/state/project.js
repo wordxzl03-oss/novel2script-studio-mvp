@@ -18,6 +18,8 @@ export const initialProjectState = {
   currentStage: "idle",
   completedStages: [],
   mode: "sample-replay",
+  activeView: "board",
+  selectedEpisodeNumber: null,
   isRunning: false,
   error: ""
 };
@@ -63,6 +65,17 @@ export function projectReducer(state, action) {
         ...state,
         error: action.error,
         isRunning: false
+      };
+    case "view/open-episode":
+      return {
+        ...state,
+        activeView: "workbench",
+        selectedEpisodeNumber: action.episodeNumber
+      };
+    case "view/show-board":
+      return {
+        ...state,
+        activeView: "board"
       };
     case "project/reset":
       return initialProjectState;

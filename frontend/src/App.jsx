@@ -12,6 +12,7 @@ import {
   stageOrder,
   useProjectState
 } from "./state/project.js";
+import EpisodeBoard from "./views/EpisodeBoard.jsx";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
 
@@ -33,11 +34,11 @@ function WorkbenchShell() {
   const [novelText, setNovelText] = useState(samplePayload.novel_text);
 
   const projectTitle = state.project?.novel?.title || title || "Untitled Project";
-  const episodeCount = state.project?.series?.episodes?.length || 0;
-  const outlineCount = state.project?.series?.outlines?.length || 0;
+  const stageLabel = stageLabels[state.currentStage] || state.currentStage;
 
   async function runFlow() {
     dispatch({ type: "flow/start", mode });
+    dispatch({ type: "view/show-board" });
     const payload =
       mode === "sample-replay"
         ? sampleReplayProjectPayload()
@@ -75,138 +76,118 @@ function WorkbenchShell() {
         </div>
         <div className="topbar-meta" aria-label="Project status">
           <span>Profile: {profileId}</span>
-          <span>Stage: {stageLabels[state.currentStage] || state.currentStage}</span>
+          <span>Stage: {stageLabel}</span>
           <span>{state.mode === "sample-replay" ? "Sample replay" : "Custom live"}</span>
         </div>
       </header>
 
-      <section className="workspace-grid">
-        <section className="control-panel">
-          <div className="panel-title">
-            <p className="eyebrow">Project intake</p>
-            <h2>V1 stateless flow</h2>
-          </div>
+      {state.error && <div className="global-notice">{state.error}</div>}
 
-          <div className="mode-switch" role="group" aria-label="Input mode">
-            <button
-              className={mode === "sample-replay" ? "active" : ""}
-              type="button"
-              onClick={useSample}
-            >
-              Sample replay
-            </button>
-            <button
-              className={mode === "custom-live" ? "active" : ""}
-              type="button"
-              onClick={() => setMode("custom-live")}
-            >
-              Custom live
-            </button>
-          </div>
+      {state.activeView === "board" ? (
+        <EpisodeBoard
+          profileId={profileId}
+          project={state.project}
+          stageLabel={stageLabel}
+          onOpenEpisode={(episodeNumber) =>
+            dispatch({ type: "view/open-episode", episodeNumber })
+          }
+        />
+      ) : (
+        <WorkbenchPlaceholder
+          episodeNumber={state.selectedEpisodeNumber}
+          onBack={() => dispatch({ type: "view/show-board" })}
+        />
+      )}
 
-          <label>
-            Project title
-            <input value={title} onChange={(event) => setTitle(event.target.value)} />
-          </label>
+      <details className="project-runner">
+        <summary>Project intake and V1 pipeline</summary>
+        <div className="runner-grid">
+          <section className="control-panel">
+            <div className="panel-title">
+              <p className="eyebrow">Project intake</p>
+              <h2>Run the stateless flow</h2>
+            </div>
 
-          <label>
-            Profile
-            <input value={profileId} onChange={(event) => setProfileId(event.target.value)} />
-          </label>
-
-          <label>
-            Novel text
-            <textarea
-              value={novelText}
-              onChange={(event) => setNovelText(event.target.value)}
-              spellCheck="false"
-            />
-          </label>
-
-          <button className="run-button" type="button" onClick={runFlow} disabled={state.isRunning}>
-            {state.isRunning ? "Running V1 flow..." : "Run V1 project flow"}
-          </button>
-
-          {state.error && <div className="notice error">{state.error}</div>}
-          <p className="hint">
-            Sample mode uses server replay recordings. Custom text requires the backend to run
-            with live LLM configuration.
-          </p>
-        </section>
-
-        <section className="machine-panel">
-          <div className="panel-title">
-            <p className="eyebrow">Machine layer</p>
-            <h2>Flow console</h2>
-          </div>
-          <ol className="stage-list">
-            {stageOrder.map((stage) => (
-              <li
-                className={stageClass(stage, state)}
-                key={stage}
+            <div className="mode-switch" role="group" aria-label="Input mode">
+              <button
+                className={mode === "sample-replay" ? "active" : ""}
+                type="button"
+                onClick={useSample}
               >
-                <span>{stageLabels[stage]}</span>
-                <small>{stageDescription(stage)}</small>
-              </li>
-            ))}
-          </ol>
-          <div className="api-strip">API base: {api.baseUrl}</div>
-        </section>
-      </section>
+                Sample replay
+              </button>
+              <button
+                className={mode === "custom-live" ? "active" : ""}
+                type="button"
+                onClick={() => setMode("custom-live")}
+              >
+                Custom live
+              </button>
+            </div>
 
-      <section className="view-grid">
-        <section className="paper-view">
-          <div className="panel-title">
-            <p className="eyebrow">PR-404 placeholder</p>
-            <h2>Episode board foundation</h2>
-          </div>
-          <div className="metric-row">
-            <Metric label="Outlines" value={outlineCount} />
-            <Metric label="Written episodes" value={episodeCount} />
-            <Metric label="Evidence chunks" value={state.project?.evidence_store?.chunks?.length || 0} />
-          </div>
-          <p>
-            The board view will render the first ten episode cards in PR-404. This PR only
-            establishes the state and layout surface it will read from.
-          </p>
-        </section>
+            <label>
+              Project title
+              <input value={title} onChange={(event) => setTitle(event.target.value)} />
+            </label>
+            <label>
+              Profile
+              <input value={profileId} onChange={(event) => setProfileId(event.target.value)} />
+            </label>
+            <label>
+              Novel text
+              <textarea
+                value={novelText}
+                onChange={(event) => setNovelText(event.target.value)}
+                spellCheck="false"
+              />
+            </label>
+            <button className="run-button" type="button" onClick={runFlow} disabled={state.isRunning}>
+              {state.isRunning ? "Running V1 flow..." : "Run V1 project flow"}
+            </button>
+            <p className="hint">
+              Sample mode uses replay recordings. Custom text requires server-side live LLM
+              configuration.
+            </p>
+          </section>
 
-        <section className="paper-view">
-          <div className="panel-title">
-            <p className="eyebrow">PR-405 placeholder</p>
-            <h2>Three-column workbench foundation</h2>
-          </div>
-          <div className="placeholder-columns" aria-label="Workbench placeholder">
-            <span>Adaptation graph</span>
-            <span>Source paper</span>
-            <span>Script paper</span>
-          </div>
-          <p>
-            Dragging, folding, source highlights, badges, annotations, and layer toggles stay
-            reserved for later W4 PRs.
-          </p>
-        </section>
-      </section>
+          <section className="machine-panel">
+            <div className="panel-title">
+              <p className="eyebrow">Machine layer</p>
+              <h2>Flow console</h2>
+            </div>
+            <ol className="stage-list">
+              {stageOrder.map((stage) => (
+                <li className={stageClass(stage, state)} key={stage}>
+                  <span>{stageLabels[stage]}</span>
+                  <small>{stageDescription(stage)}</small>
+                </li>
+              ))}
+            </ol>
+            <div className="api-strip">API base: {api.baseUrl}</div>
+          </section>
+        </div>
+      </details>
     </main>
   );
 }
 
-function Metric({ label, value }) {
+function WorkbenchPlaceholder({ episodeNumber, onBack }) {
   return (
-    <div className="metric">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
+    <section className="workbench-placeholder">
+      <button type="button" onClick={onBack}>Back to episode board</button>
+      <p className="eyebrow">PR-405 handoff</p>
+      <h2>Episode {String(episodeNumber || 1).padStart(2, "0")} workbench</h2>
+      <p>
+        The selected episode is now stored in React project state. The draggable three-column
+        shell is implemented in PR-405.
+      </p>
+    </section>
   );
 }
 
 function stageClass(stage, state) {
-  if (state.currentStage === stage && state.isRunning) {
-    return "active";
-  }
-  if (state.completedStages.includes(stage)) {
-    return "done";
-  }
+  if (state.currentStage === stage && state.isRunning) return "active";
+  if (state.completedStages.includes(stage)) return "done";
   return "";
 }
 
