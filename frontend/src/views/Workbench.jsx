@@ -2,15 +2,19 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import AdaptationGraph from "../components/AdaptationGraph.jsx";
 import CompressionView from "../components/CompressionView.jsx";
+import LayerToggle from "../components/LayerToggle.jsx";
 import ModeTabs from "../components/ModeTabs.jsx";
-import SourceBadge from "../components/SourceBadge.jsx";
+import ScriptView from "../components/ScriptView.jsx";
 import SourceHighlight from "../components/SourceHighlight.jsx";
 import SplitPane from "../components/SplitPane.jsx";
+import {
+  DEFAULT_LAYER_VISIBILITY,
+  toggleLayer
+} from "../components/layerModel.js";
 import { resetPaneWidths } from "../components/splitPaneModel.js";
 import { buildMainlineNodes, resolveWorkbenchSelection } from "./workbenchModel.js";
 import {
   findWrittenEpisode,
-  flattenEpisodeElements,
   sourceTargetForBadge
 } from "./provenanceModel.js";
 
@@ -28,6 +32,7 @@ export default function Workbench({ api, project, episodeNumber, onBack }) {
   const [sourceView, setSourceView] = useState("text");
   const [focusedRange, setFocusedRange] = useState(null);
   const [badgeNotice, setBadgeNotice] = useState("");
+  const [layerVisibility, setLayerVisibility] = useState(DEFAULT_LAYER_VISIBILITY);
   const [highlightData, setHighlightData] = useState(EMPTY_HIGHLIGHT_DATA);
   const [highlightStatus, setHighlightStatus] = useState("idle");
   const [highlightError, setHighlightError] = useState("");
@@ -48,12 +53,6 @@ export default function Workbench({ api, project, episodeNumber, onBack }) {
   const selectedNode =
     nodes.find((node) => node.id === selection.nodeId) || nodes[0];
   const selectedEpisode = findWrittenEpisode(project, selection.episodeNumber);
-  const scriptRows = useMemo(() => {
-    const rows = flattenEpisodeElements(selectedEpisode, highlightData.element_badges);
-    return selection.sceneId
-      ? rows.filter((row) => row.sceneId === selection.sceneId)
-      : rows;
-  }, [highlightData.element_badges, selectedEpisode, selection.sceneId]);
   const selectedLabel = selectedNode
     ? `${selectedNode.label} / ${selectedNode.title}`
     : "E01 / Episode 1";
@@ -123,6 +122,10 @@ export default function Workbench({ api, project, episodeNumber, onBack }) {
     setFocusedRange(target);
   }
 
+  function toggleScriptLayer(layerId) {
+    setLayerVisibility((current) => toggleLayer(current, layerId));
+  }
+
   const panes = [
     {
       id: "graph",
@@ -161,12 +164,17 @@ export default function Workbench({ api, project, episodeNumber, onBack }) {
       kicker: "Episode draft",
       tone: "paper",
       content: (
-        <ScriptProvenance
+        <ScriptPanel
           badgeNotice={badgeNotice}
-          rows={scriptRows}
+          elementBadges={highlightData.element_badges}
+          episode={selectedEpisode}
+          layerVisibility={layerVisibility}
+          registry={project?.registry}
           selectedLabel={selectedLabel}
+          selectedSceneId={selection.sceneId}
           status={highlightStatus}
           onActivateBadge={activateBadge}
+          onToggleLayer={toggleScriptLayer}
         />
       )
     }
@@ -254,45 +262,42 @@ function SourcePanel({
   );
 }
 
-function ScriptProvenance({
+function ScriptPanel({
   badgeNotice,
-  rows,
+  elementBadges,
+  episode,
+  layerVisibility,
+  registry,
   selectedLabel,
+  selectedSceneId,
   status,
-  onActivateBadge
+  onActivateBadge,
+  onToggleLayer
 }) {
-  if (status === "loading") return <PanelStatus text="Loading script provenance..." />;
-  if (status === "idle") return <PanelStatus text="Script provenance is available for written episodes." />;
-  if (status === "error") return <PanelStatus text="Script provenance could not be loaded." tone="error" />;
-
   return (
-    <div className="script-provenance">
-      <header className="script-provenance__title">
-        <span>Backend-verified sources</span>
-        <strong>{selectedLabel}</strong>
-      </header>
-      {badgeNotice && <div className="badge-notice">{badgeNotice}</div>}
-      {rows.length > 0 ? rows.map((row) => (
-        <article
-          className="provenance-row"
-          key={`${row.sceneId}-${row.beatId}-${row.element.element_id}`}
-        >
-          <header>
-            <span>{row.sceneId} / {row.beatId}</span>
-            <strong>{row.element.type}</strong>
-          </header>
-          <p>{row.element.text}</p>
-          <div className="element-badges">
-            {row.badges.map((badge, index) => (
-              <SourceBadge
-                badge={badge}
-                key={`${row.element.element_id}-${index}`}
-                onActivate={onActivateBadge}
-              />
-            ))}
-          </div>
-        </article>
-      )) : <div className="provenance-empty">No script elements match this selection.</div>}
+    <div className="script-panel">
+      <LayerToggle visibility={layerVisibility} onToggle={onToggleLayer} />
+      {status === "loading" && <PanelStatus text="Loading script provenance..." />}
+      {status === "idle" && (
+        <PanelStatus text="Script provenance is available for written episodes." />
+      )}
+      {status === "error" && (
+        <PanelStatus text="Script provenance could not be loaded." tone="error" />
+      )}
+      {status === "ready" && !layerVisibility.screenwriting && (
+        <div className="layer-hidden-state">Screenwriting layer hidden.</div>
+      )}
+      {status === "ready" && layerVisibility.screenwriting && (
+        <ScriptView
+          badgeNotice={badgeNotice}
+          elementBadges={elementBadges}
+          episode={episode}
+          registry={registry}
+          selectedLabel={selectedLabel}
+          selectedSceneId={selectedSceneId}
+          onActivateBadge={onActivateBadge}
+        />
+      )}
     </div>
   );
 }
