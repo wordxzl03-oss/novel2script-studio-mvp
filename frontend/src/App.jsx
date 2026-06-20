@@ -13,6 +13,7 @@ import {
   useProjectState
 } from "./state/project.js";
 import EpisodeBoard from "./views/EpisodeBoard.jsx";
+import Workbench from "./views/Workbench.jsx";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
 
@@ -93,8 +94,9 @@ function WorkbenchShell() {
           }
         />
       ) : (
-        <WorkbenchPlaceholder
+        <Workbench
           episodeNumber={state.selectedEpisodeNumber}
+          project={state.project}
           onBack={() => dispatch({ type: "view/show-board" })}
         />
       )}
@@ -168,20 +170,6 @@ function WorkbenchShell() {
         </div>
       </details>
     </main>
-  );
-}
-
-function WorkbenchPlaceholder({ episodeNumber, onBack }) {
-  return (
-    <section className="workbench-placeholder">
-      <button type="button" onClick={onBack}>Back to episode board</button>
-      <p className="eyebrow">PR-405 handoff</p>
-      <h2>Episode {String(episodeNumber || 1).padStart(2, "0")} workbench</h2>
-      <p>
-        The selected episode is now stored in React project state. The draggable three-column
-        shell is implemented in PR-405.
-      </p>
-    </section>
   );
 }
 
