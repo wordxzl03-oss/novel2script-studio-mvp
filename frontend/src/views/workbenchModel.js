@@ -53,4 +53,3 @@ export function resolveWorkbenchSelection(nodes, episodeNumber, sceneId = null) 
 function indexByNumber(items) {
   return new Map(items.map((item) => [item.number, item]));
 }
-

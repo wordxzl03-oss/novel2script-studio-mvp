@@ -191,4 +191,3 @@ function stageDescription(stage) {
 }
 
 export default App;
-

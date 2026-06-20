@@ -134,4 +134,3 @@ function ModePlaceholder({ mode, selectedLabel }) {
     </div>
   );
 }
-

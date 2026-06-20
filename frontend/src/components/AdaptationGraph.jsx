@@ -21,4 +21,3 @@ export default function AdaptationGraph({ nodes, selectedNodeId, onSelect }) {
     </nav>
   );
 }
-

@@ -30,4 +30,3 @@ test("resetting pane widths returns a fresh default value", () => {
   assert.deepEqual(reset, DEFAULT_PANE_WIDTHS);
   assert.notEqual(reset, DEFAULT_PANE_WIDTHS);
 });
-

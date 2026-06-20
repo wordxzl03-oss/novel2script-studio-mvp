@@ -25,4 +25,3 @@ export default function ModeTabs({ value, onChange }) {
     </div>
   );
 }
-
