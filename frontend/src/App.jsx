@@ -99,6 +99,9 @@ function WorkbenchShell() {
           episodeNumber={state.selectedEpisodeNumber}
           project={state.project}
           onBack={() => dispatch({ type: "view/show-board" })}
+          onSaveAnnotation={(annotation) =>
+            dispatch({ type: "annotation/save", annotation })
+          }
         />
       )}
 

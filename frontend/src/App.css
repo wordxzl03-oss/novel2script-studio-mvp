@@ -699,6 +699,56 @@ textarea {
   background: var(--dark-bg);
 }
 
+.annotation-filter {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--dark-line);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+
+.annotation-filter label,
+.annotation-filter label span {
+  display: block;
+}
+
+.annotation-filter label {
+  min-width: 0;
+  flex: 1;
+}
+
+.annotation-filter label span {
+  margin-bottom: var(--space-1);
+  color: var(--dark-accent);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.annotation-filter select,
+.annotation-editor select,
+.annotation-editor textarea {
+  width: 100%;
+  border: 1px solid var(--dark-line);
+  border-radius: var(--radius-sm);
+  color: var(--dark-ink);
+  background: var(--dark-panel);
+}
+
+.annotation-filter select {
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.annotation-filter small {
+  padding-bottom: 7px;
+  color: var(--dark-ink-soft);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
 .adaptation-graph ol {
   position: relative;
   margin: 0;
@@ -745,7 +795,15 @@ textarea {
   border-color: var(--dark-line);
 }
 
-.graph-node button {
+.graph-node__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.graph-node .graph-node__select {
   display: grid;
   width: 100%;
   grid-template-columns: auto minmax(0, 1fr);
@@ -758,15 +816,15 @@ textarea {
   text-align: left;
 }
 
-.graph-node button:hover,
-.graph-node button:focus-visible {
+.graph-node .graph-node__select:hover,
+.graph-node .graph-node__select:focus-visible {
   border-color: var(--dark-line);
   outline: 0;
   color: var(--dark-ink);
   background: var(--dark-panel);
 }
 
-.graph-node button.active {
+.graph-node .graph-node__select.active {
   border-color: var(--dark-accent);
   color: var(--dark-ink);
   background: var(--dark-panel-raised);
@@ -783,6 +841,104 @@ textarea {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.annotation-flag__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid var(--dark-line);
+  border-radius: var(--radius-sm);
+  padding: 5px 6px;
+  color: var(--dark-ink-soft);
+  background: transparent;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.annotation-flag__trigger:hover,
+.annotation-flag__trigger:focus-visible,
+.annotation-flag.annotated .annotation-flag__trigger {
+  border-color: var(--dark-warning);
+  outline: 0;
+  color: var(--dark-ink);
+  background: var(--dark-panel-raised);
+}
+
+.annotation-editor {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 4px);
+  right: 0;
+  width: min(270px, calc(100vw - 72px));
+  border: 1px solid var(--dark-line);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  color: var(--dark-ink);
+  background: var(--dark-panel-raised);
+  box-shadow: var(--shadow-low);
+}
+
+.annotation-editor strong {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--dark-accent);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.annotation-editor label {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--dark-ink-soft);
+  font-size: 10px;
+}
+
+.annotation-editor select,
+.annotation-editor textarea {
+  display: block;
+  margin-top: var(--space-1);
+  padding: 7px 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+}
+
+.annotation-editor textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.annotation-editor__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.annotation-editor__actions button {
+  border: 1px solid var(--dark-line);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  color: var(--dark-ink);
+  background: var(--dark-panel);
+  font-size: 9px;
+}
+
+.annotation-editor__actions button[type="submit"] {
+  border-color: var(--dark-accent);
+  background: var(--paper-accent-strong);
+}
+
+.annotation-editor__actions button.danger {
+  margin-left: auto;
+  border-color: var(--dark-danger);
+}
+
+.annotation-filter-empty {
+  padding: var(--space-5) var(--space-2);
+  color: var(--dark-ink-soft);
+  font-family: var(--font-copy);
+  text-align: center;
 }
 
 .context-placeholder {

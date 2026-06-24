@@ -24,7 +24,13 @@ const EMPTY_HIGHLIGHT_DATA = {
   element_badges: []
 };
 
-export default function Workbench({ api, project, episodeNumber, onBack }) {
+export default function Workbench({
+  api,
+  project,
+  episodeNumber,
+  onBack,
+  onSaveAnnotation
+}) {
   const nodes = useMemo(() => buildMainlineNodes(project), [project]);
   const [mode, setMode] = useState("compare");
   const [widths, setWidths] = useState(resetPaneWidths);
@@ -32,6 +38,7 @@ export default function Workbench({ api, project, episodeNumber, onBack }) {
   const [sourceView, setSourceView] = useState("text");
   const [focusedRange, setFocusedRange] = useState(null);
   const [badgeNotice, setBadgeNotice] = useState("");
+  const [annotationFilter, setAnnotationFilter] = useState("all");
   const [layerVisibility, setLayerVisibility] = useState(DEFAULT_LAYER_VISIBILITY);
   const [highlightData, setHighlightData] = useState(EMPTY_HIGHLIGHT_DATA);
   const [highlightStatus, setHighlightStatus] = useState("idle");
@@ -134,8 +141,12 @@ export default function Workbench({ api, project, episodeNumber, onBack }) {
       tone: "dark",
       content: (
         <AdaptationGraph
+          annotations={project?.annotations || []}
+          annotationFilter={annotationFilter}
           nodes={nodes}
           selectedNodeId={selection.nodeId}
+          onAnnotationFilterChange={setAnnotationFilter}
+          onSaveAnnotation={onSaveAnnotation}
           onSelect={selectNode}
         />
       )

@@ -47,7 +47,7 @@ export function projectReducer(state, action) {
     case "flow/project-loaded":
       return {
         ...state,
-        project: action.project,
+        project: mergeProjectAnnotations(action.project, state.project),
         currentStage: action.stage,
         completedStages: previousStages(action.stage),
         error: ""
@@ -77,11 +77,51 @@ export function projectReducer(state, action) {
         ...state,
         activeView: "board"
       };
+    case "annotation/save":
+      return {
+        ...state,
+        project: saveProjectAnnotation(state.project, action.annotation)
+      };
     case "project/reset":
       return initialProjectState;
     default:
       return state;
   }
+}
+
+function mergeProjectAnnotations(project, currentProject) {
+  const incomingAnnotations = Array.isArray(project?.annotations)
+    ? project.annotations
+    : null;
+  const currentAnnotations =
+    currentProject?.project_id === project?.project_id &&
+    Array.isArray(currentProject?.annotations)
+      ? currentProject.annotations
+      : [];
+  return {
+    ...project,
+    annotations: incomingAnnotations ?? currentAnnotations
+  };
+}
+
+function saveProjectAnnotation(project, annotation) {
+  if (!project || !annotation?.node_id) return project;
+  const annotations = Array.isArray(project.annotations) ? project.annotations : [];
+  const normalized = {
+    node_id: annotation.node_id,
+    flag: annotation.flag || "",
+    note: String(annotation.note || "").trim()
+  };
+  const remaining = annotations.filter(
+    (item) => item.node_id !== normalized.node_id
+  );
+  return {
+    ...project,
+    annotations:
+      normalized.flag || normalized.note
+        ? [...remaining, normalized]
+        : remaining
+  };
 }
 
 export function ProjectProvider({ children }) {
