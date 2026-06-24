@@ -65,32 +65,32 @@ export function createV1ApiClient({
     },
     diagnoseProject(projectState, profileId = PROFILE_ID) {
       return postJson("/api/v1/diagnose", {
-        ...projectState,
+        ...backendProjectState(projectState),
         profile_id: profileId
       });
     },
     buildStoryBible(projectState, existingBible = null) {
       return postJson("/api/v1/story-bible", {
-        ...projectState,
+        ...backendProjectState(projectState),
         existing_bible: existingBible
       });
     },
     planEpisodes(projectState, profileId = PROFILE_ID) {
       return postJson("/api/v1/plan", {
-        ...projectState,
+        ...backendProjectState(projectState),
         profile_id: profileId
       });
     },
     writeEpisodes(projectState, { profileId = PROFILE_ID, maxEpisodes = 3 } = {}) {
       return postJson("/api/v1/write", {
-        ...projectState,
+        ...backendProjectState(projectState),
         profile_id: profileId,
         max_episodes: maxEpisodes
       });
     },
     getEpisodeHighlight(projectState, episodeNumber) {
       return postJson("/api/v1/episode-highlight", {
-        ...projectState,
+        ...backendProjectState(projectState),
         episode_number: episodeNumber
       });
     },
@@ -128,6 +128,11 @@ export function createV1ApiClient({
 
     return project;
   }
+}
+
+export function backendProjectState(projectState) {
+  const { annotations: _annotations, ...backendState } = projectState || {};
+  return backendState;
 }
 
 export function sampleReplayProjectPayload() {

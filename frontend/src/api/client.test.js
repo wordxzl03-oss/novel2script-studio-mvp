@@ -74,3 +74,34 @@ test("V1 client surfaces friendly structured errors", async () => {
     }
   );
 });
+
+test("frontend annotations are omitted from strict backend ProjectState requests", async () => {
+  const calls = [];
+  const api = createV1ApiClient({
+    baseUrl: "http://api.example",
+    fetchImpl: async (url, options) => {
+      calls.push({ url, body: JSON.parse(options.body) });
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({ project_id: "project:demo" })
+      };
+    }
+  });
+  const project = {
+    project_id: "project:demo",
+    annotations: [
+      { node_id: "episode-1", flag: "待改", note: "Tighten setup." }
+    ]
+  };
+
+  await api.diagnoseProject(project);
+  await api.buildStoryBible(project);
+  await api.planEpisodes(project);
+  await api.writeEpisodes(project);
+  await api.getEpisodeHighlight(project, 1);
+
+  assert.equal(calls.length, 5);
+  assert.ok(calls.every((call) => !("annotations" in call.body)));
+  assert.ok(calls.every((call) => call.body.project_id === "project:demo"));
+});
