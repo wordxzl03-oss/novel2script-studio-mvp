@@ -1,0 +1,52 @@
+{
+  "response": {
+    "content": {
+      "points": [
+        {
+          "point_id": "RP00201",
+          "kind": "reveal",
+          "description": "Suggested retention point: reveal that Rowan hid the letter in the archive before dawn.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.82,
+            "is_inferred": false
+          }
+        },
+        {
+          "point_id": "RP00202",
+          "kind": "paywall",
+          "description": "Suggested paywall pause as the archive trail implies Rowan moved more evidence.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 2,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.76,
+            "is_inferred": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 682,
+      "completion_tokens": 182,
+      "total_tokens": 864
+    }
+  },
+  "fixture": true
+}

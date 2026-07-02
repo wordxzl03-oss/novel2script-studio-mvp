@@ -8,6 +8,7 @@ import {
 } from "./api/client.js";
 import {
   ProjectProvider,
+  shouldExpandProjectRunner,
   stageLabels,
   stageOrder,
   useProjectState
@@ -36,6 +37,7 @@ function WorkbenchShell() {
 
   const projectTitle = state.project?.novel?.title || title || "Untitled Project";
   const stageLabel = stageLabels[state.currentStage] || state.currentStage;
+  const runnerOpen = shouldExpandProjectRunner(state);
 
   async function runFlow() {
     dispatch({ type: "flow/start", mode });
@@ -84,29 +86,14 @@ function WorkbenchShell() {
 
       {state.error && <div className="global-notice">{state.error}</div>}
 
-      {state.activeView === "board" ? (
-        <EpisodeBoard
-          profileId={profileId}
-          project={state.project}
-          stageLabel={stageLabel}
-          onOpenEpisode={(episodeNumber) =>
-            dispatch({ type: "view/open-episode", episodeNumber })
-          }
-        />
-      ) : (
-        <Workbench
-          api={api}
-          episodeNumber={state.selectedEpisodeNumber}
-          project={state.project}
-          onBack={() => dispatch({ type: "view/show-board" })}
-          onSaveAnnotation={(annotation) =>
-            dispatch({ type: "annotation/save", annotation })
-          }
-        />
-      )}
-
-      <details className="project-runner">
+      <details className="project-runner" open={runnerOpen}>
         <summary>Project intake and V1 pipeline</summary>
+        <ol className="flow-path" aria-label="W4 visual flow">
+          <li>Sample or upload</li>
+          <li>Progress reveal</li>
+          <li>Episode board</li>
+          <li>Workbench evidence</li>
+        </ol>
         <div className="runner-grid">
           <section className="control-panel">
             <div className="panel-title">
@@ -173,6 +160,27 @@ function WorkbenchShell() {
           </section>
         </div>
       </details>
+
+      {state.activeView === "board" ? (
+        <EpisodeBoard
+          profileId={profileId}
+          project={state.project}
+          stageLabel={stageLabel}
+          onOpenEpisode={(episodeNumber) =>
+            dispatch({ type: "view/open-episode", episodeNumber })
+          }
+        />
+      ) : (
+        <Workbench
+          api={api}
+          episodeNumber={state.selectedEpisodeNumber}
+          project={state.project}
+          onBack={() => dispatch({ type: "view/show-board" })}
+          onSaveAnnotation={(annotation) =>
+            dispatch({ type: "annotation/save", annotation })
+          }
+        />
+      )}
     </main>
   );
 }

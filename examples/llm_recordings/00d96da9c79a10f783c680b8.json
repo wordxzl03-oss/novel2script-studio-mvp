@@ -1,0 +1,86 @@
+{
+  "response": {
+    "content": {
+      "episode_id": "E002",
+      "number": 2,
+      "title": "Archive Before Dawn",
+      "logline": "Rowan hides the letter before Mira can expose him.",
+      "opening_hook": "Rowan slips into the archive before dawn.",
+      "main_conflict": "Mira must connect Rowan to the missing letter.",
+      "emotional_payoff": "Mira realizes Rowan is afraid of what the letter proves.",
+      "cliffhanger": "The archive trail suggests Rowan moved more than one piece of evidence.",
+      "source_ranges": [
+        {
+          "type": "source_based",
+          "source_range": {
+            "chapter_id": "CH001",
+            "start_para": 2,
+            "end_para": 2
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "scene_id": "E002SC001",
+          "title": "archive before dawn",
+          "source_links": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 2,
+                "end_para": 2
+              }
+            }
+          ],
+          "beats": [
+            {
+              "beat_id": "E002B001",
+              "summary": "Rowan hides the letter in the archive before dawn.",
+              "elements": [
+                {
+                  "element_id": "E002EL001",
+                  "type": "action",
+                  "text": "Before dawn, Rowan pushes the letter deep into the archive shelves.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 2,
+                        "end_para": 2
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "E002EL002",
+                  "type": "dialogue",
+                  "speaker_id": "C002",
+                  "text": "No one sees this letter again.",
+                  "performance_hint": "under his breath",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 2,
+                        "end_para": 2
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 722,
+      "completion_tokens": 242,
+      "total_tokens": 964
+    }
+  },
+  "fixture": true
+}

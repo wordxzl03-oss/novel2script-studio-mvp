@@ -1,0 +1,86 @@
+{
+  "response": {
+    "content": {
+      "episode_id": "E001",
+      "number": 1,
+      "title": "The Letter",
+      "logline": "Mira reopens the case after finding a sealed letter.",
+      "opening_hook": "Mira finds a sealed letter and decides to act.",
+      "main_conflict": "Mira must decide whether to reopen a dangerous case.",
+      "emotional_payoff": "Mira chooses action instead of silence.",
+      "cliffhanger": "The hidden letter points toward Rowan.",
+      "source_ranges": [
+        {
+          "type": "source_based",
+          "source_range": {
+            "chapter_id": "CH001",
+            "start_para": 1,
+            "end_para": 1
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "scene_id": "E001SC001",
+          "title": "archive letter discovery",
+          "source_links": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ],
+          "beats": [
+            {
+              "beat_id": "E001B001",
+              "summary": "Mira finds the letter and chooses to reopen the case.",
+              "elements": [
+                {
+                  "element_id": "E001EL001",
+                  "type": "action",
+                  "text": "Mira turns the sealed letter in her hand and fixes on the old case it reopens.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 1,
+                        "end_para": 1
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "E001EL002",
+                  "type": "dialogue",
+                  "speaker_id": "C001",
+                  "text": "This case opens again tonight.",
+                  "performance_hint": "low, controlled",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 1,
+                        "end_para": 1
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 721,
+      "completion_tokens": 241,
+      "total_tokens": 962
+    }
+  },
+  "fixture": true
+}

@@ -1,0 +1,52 @@
+{
+  "response": {
+    "content": {
+      "points": [
+        {
+          "point_id": "RP00301",
+          "kind": "reversal",
+          "description": "Suggested retention point: Mira connects the sealed letter to Rowan hiding it in the archive.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.82,
+            "is_inferred": false
+          }
+        },
+        {
+          "point_id": "RP00302",
+          "kind": "paywall",
+          "description": "Suggested paywall pause after Rowan's archive move opens a second hidden trail.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 2
+                }
+              }
+            ],
+            "confidence": 0.76,
+            "is_inferred": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 683,
+      "completion_tokens": 183,
+      "total_tokens": 866
+    }
+  },
+  "fixture": true
+}

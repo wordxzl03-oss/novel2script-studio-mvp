@@ -59,10 +59,12 @@ V1 是完整竖屏短剧改编工作台, 不再以旧版场景级剧本生成链
 -> 导出短剧开发包
 ```
 
-W3 status: IP diagnosis, story bible generation, first-10 episode outlines,
-first-3 complete episodes, short-drama linter checks, and retention/paywall
-point suggestions are available in replay mode. UI workbench, rewrite/diff,
-forking, export, and W7 retention visualization remain future waves.
+W4 status: replay mode now reaches the usable studio path. The built-in sample
+runs bootstrap -> diagnosis -> story bible -> first-10 episode plan -> first-3
+episode drafts, then opens the episode board and three-pane workbench with
+source highlights, compression view, script badges, the screenwriting layer, and
+human planning annotations. Rewrite/diff, forking, export, and W7 visual or
+production layers remain future waves.
 
 所有涉及 AI 的诊断、生成、改写、分叉、评估与风险提示都必须经过 AI 编排层。没有 `RetrievalContext`、`ValidationReport` 和 `AITaskRun` 的 AI 输出不得进入正式项目状态。
 

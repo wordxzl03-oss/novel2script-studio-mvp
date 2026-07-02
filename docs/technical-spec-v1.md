@@ -406,6 +406,59 @@ Episode and EpisodeOutline tasks. PR-308 does not add project persistence,
 API routes, UI/workbench behavior, rewrite/diff flows, forks, export tooling,
 or W7 retention visualization.
 
+### 4.2.8 W4 stateless project API and frontend-held state
+
+W4 exposes the W2/W3 chain through frontend-facing stateless endpoints. The
+server still does not own project persistence, sessions, or a `ProjectStore`.
+The browser holds the current `ProjectState` JSON document and posts it back to
+each action endpoint. Every action returns an updated `ProjectState`.
+
+The W4 endpoint chain is:
+
+1. `POST /api/v1/project/bootstrap`: split the submitted novel, build
+   `SourceNovel` and `Registry`, chunk the novel into an `EvidenceStore`, and
+   return the initial `ProjectState`.
+2. `POST /api/v1/diagnose`: rebuild `EvidenceStore` from
+   `ProjectState.evidence_store`, run `DiagnosisAgent`, write `ip_diagnosis`,
+   and return the updated `ProjectState`.
+3. `POST /api/v1/story-bible`: rebuild the store, run `StoryBibleAgent`, write
+   `story_bible`, index story-bible chunks back into the serialized store, and
+   return the updated `ProjectState`.
+4. `POST /api/v1/plan`: rebuild the store, run `EpisodePlannerAgent`, write
+   `series.outlines`, and return the updated `ProjectState`.
+5. `POST /api/v1/write`: rebuild the store, run `EpisodeWriterAgent` for the
+   first three outlines by default, attach retention points, write
+   `series.episodes`, and return the updated `ProjectState`.
+6. `POST /api/v1/episode-highlight`: accept `ProjectState + episode_number`,
+   find the selected episode, rebuild the store, and return
+   `highlight_anchors`, `compression_view`, and `element_badges`.
+
+Frontend state rules:
+
+- `frontend/src/state/project.js` is the in-memory owner of the current
+  `ProjectState`; W4 does not use `localStorage`, `sessionStorage`, or a server
+  session.
+- Frontend-only planning annotations live in `project.annotations`. They are
+  preserved across backend `ProjectState` refreshes but stripped before posting
+  to strict backend endpoint schemas.
+- The W4 visual path is sample/custom intake -> stage progress
+  (`diagnose -> story-bible -> plan -> write`) -> episode board -> three-pane
+  workbench -> source highlights and script badges.
+- Branch comparison, rewrite/diff, version merge, multi-track structure,
+  export, and W7 visual/production layers remain future waves and are
+  represented only as disabled or empty placeholders where needed.
+
+Replay contract:
+
+- `DEMO_MODE=1` forces replay for the full W4 endpoint chain; no live API call
+  is allowed in backend smoke tests.
+- `backend/tests/test_v1_api_smoke.py` covers
+  bootstrap -> diagnose -> story-bible -> plan -> write -> episode-highlight and
+  asserts valid `ProjectState` objects, three written episodes, and available
+  highlight data.
+- Replay fixture usage is validation evidence only. It is not a cost signal and
+  must not be surfaced as spend or quota usage.
+
 ### 4.3 导出不是 Agent
 
 F28 开发包导出是确定性汇总流程:

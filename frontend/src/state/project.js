@@ -24,6 +24,10 @@ export const initialProjectState = {
   error: ""
 };
 
+export function shouldExpandProjectRunner(state) {
+  return !state?.project || Boolean(state?.isRunning) || Boolean(state?.error);
+}
+
 const ProjectContext = createContext(null);
 
 export function projectReducer(state, action) {

@@ -1,0 +1,204 @@
+{
+  "response": {
+    "content": {
+      "outlines": [
+        {
+          "number": 1,
+          "title": "The Letter",
+          "logline": "Mira reopens the case after finding a sealed letter.",
+          "opening_hook": "Mira finds a sealed letter and decides to act.",
+          "main_conflict": "Mira must decide whether to reopen a dangerous case.",
+          "emotional_payoff": "Mira chooses action instead of silence.",
+          "cliffhanger": "The hidden letter points toward Rowan.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 1
+              }
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "title": "Archive Before Dawn",
+          "logline": "Rowan hides the letter before Mira can expose him.",
+          "opening_hook": "Rowan slips into the archive before dawn.",
+          "main_conflict": "Mira must connect Rowan to the missing letter.",
+          "emotional_payoff": "Mira realizes Rowan is afraid of what the letter proves.",
+          "cliffhanger": "The archive trail suggests Rowan moved more than one piece of evidence.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 2,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "title": "The Hidden Evidence",
+          "logline": "Mira links the letter to Rowan's archive cover-up.",
+          "opening_hook": "Mira compares the letter with Rowan's dawn archive move.",
+          "main_conflict": "Mira must confront Rowan without losing the only proof.",
+          "emotional_payoff": "Mira turns the private clue into leverage.",
+          "cliffhanger": "Rowan's archive move reveals a second hidden trail.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "title": "Second Trail",
+          "logline": "The archive clue opens another path in the old case.",
+          "opening_hook": "Mira sees that Rowan's hiding place was chosen carefully.",
+          "main_conflict": "Mira must follow the archive trail before Rowan erases it.",
+          "emotional_payoff": "Mira confirms the letter was meant to restart the case.",
+          "cliffhanger": "A second archive marker points beyond Rowan.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "title": "Proof Under Pressure",
+          "logline": "Mira protects the letter while Rowan tries to control the archive.",
+          "opening_hook": "Mira keeps the sealed letter close as the archive closes in.",
+          "main_conflict": "Mira must prove Rowan hid the evidence before dawn.",
+          "emotional_payoff": "Mira understands that the letter was a call to fight back.",
+          "cliffhanger": "The archive record shows a missing handoff.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "title": "Missing Handoff",
+          "logline": "Mira follows the missing archive handoff back to Rowan.",
+          "opening_hook": "The archive record leaves one dawn movement unexplained.",
+          "main_conflict": "Mira must force Rowan to account for the hidden letter.",
+          "emotional_payoff": "Mira sees the shape of the cover-up.",
+          "cliffhanger": "The hidden letter names a case that should have stayed closed.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "title": "The Old Case",
+          "logline": "The sealed letter pulls Mira deeper into the old case.",
+          "opening_hook": "Mira rereads the letter as Rowan's archive move gains meaning.",
+          "main_conflict": "Mira must reopen the case while Rowan guards the proof.",
+          "emotional_payoff": "Mira accepts that silence protects Rowan.",
+          "cliffhanger": "The archive proof suggests Rowan was hiding evidence for someone else.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 8,
+          "title": "For Someone Else",
+          "logline": "Mira suspects Rowan's archive move protected a larger secret.",
+          "opening_hook": "Rowan's dawn action no longer looks like a private choice.",
+          "main_conflict": "Mira must keep the letter safe while tracing who benefits.",
+          "emotional_payoff": "Mira turns suspicion into a plan.",
+          "cliffhanger": "The letter's timing exposes a second watcher.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 9,
+          "title": "Second Watcher",
+          "logline": "Mira uses the letter and archive clue to draw out another watcher.",
+          "opening_hook": "Mira stages the sealed letter where Rowan can see it.",
+          "main_conflict": "Mira must pressure Rowan without losing control of the proof.",
+          "emotional_payoff": "Mira realizes the old case can still be exposed.",
+          "cliffhanger": "A reply arrives before dawn.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        },
+        {
+          "number": 10,
+          "title": "Before Dawn",
+          "logline": "Mira confronts the meaning of Rowan's dawn archive move.",
+          "opening_hook": "Before dawn, Mira returns to the archive with the sealed letter.",
+          "main_conflict": "Mira must expose Rowan's hidden evidence before it disappears again.",
+          "emotional_payoff": "Mira turns the letter into public leverage.",
+          "cliffhanger": "The next case file opens with Mira's name.",
+          "source_ranges": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 650,
+      "completion_tokens": 680,
+      "total_tokens": 1330
+    }
+  },
+  "fixture": true
+}
