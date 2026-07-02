@@ -1,0 +1,52 @@
+{
+  "response": {
+    "content": {
+      "points": [
+        {
+          "point_id": "RP00101",
+          "kind": "hook",
+          "description": "Suggested retention point: hold on Mira choosing to reopen the case after finding the sealed letter.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.82,
+            "is_inferred": false
+          }
+        },
+        {
+          "point_id": "RP00102",
+          "kind": "paywall",
+          "description": "Suggested paywall pause after the hidden letter points Mira toward Rowan.",
+          "evidence": {
+            "source_basis": [
+              {
+                "type": "source_based",
+                "source_range": {
+                  "chapter_id": "CH001",
+                  "start_para": 1,
+                  "end_para": 1
+                }
+              }
+            ],
+            "confidence": 0.76,
+            "is_inferred": false
+          }
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 681,
+      "completion_tokens": 181,
+      "total_tokens": 862
+    }
+  },
+  "fixture": true
+}

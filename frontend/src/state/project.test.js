@@ -4,6 +4,7 @@ import { test } from "node:test";
 import {
   initialProjectState,
   projectReducer,
+  shouldExpandProjectRunner,
   stageOrder
 } from "./project.js";
 
@@ -114,4 +115,29 @@ test("project annotations survive backend ProjectState refreshes and JSON reload
     project: { project_id: "project:imported", annotations: [annotation] }
   });
   assert.deepEqual(state.project.annotations, [annotation]);
+});
+
+test("project runner expands only while intake needs attention", () => {
+  assert.equal(shouldExpandProjectRunner(initialProjectState), true);
+  assert.equal(
+    shouldExpandProjectRunner({ ...initialProjectState, isRunning: true }),
+    true
+  );
+  assert.equal(
+    shouldExpandProjectRunner({
+      ...initialProjectState,
+      project: { project_id: "P001" },
+      currentStage: "complete",
+      completedStages: stageOrder
+    }),
+    false
+  );
+  assert.equal(
+    shouldExpandProjectRunner({
+      ...initialProjectState,
+      project: { project_id: "P001" },
+      error: "Replay recording is missing."
+    }),
+    true
+  );
 });

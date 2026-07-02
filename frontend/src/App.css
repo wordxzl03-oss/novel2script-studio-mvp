@@ -362,11 +362,32 @@ h3 {
   cursor: pointer;
 }
 
+.flow-path {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  border-top: 1px solid var(--paper-line);
+  margin: 0;
+  padding: var(--space-4) var(--space-4) 0;
+  list-style: none;
+}
+
+.flow-path li {
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  color: var(--paper-ink-soft);
+  background: var(--paper-panel-muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+
 .runner-grid {
   display: grid;
   grid-template-columns: minmax(360px, 0.9fr) minmax(360px, 1.1fr);
   gap: var(--space-4);
-  border-top: 1px solid var(--paper-line);
   padding: var(--space-4);
 }
 
@@ -1485,6 +1506,7 @@ textarea {
   .board-summary,
   .episode-grid,
   .episode-beats,
+  .flow-path,
   .mode-switch {
     grid-template-columns: 1fr;
   }

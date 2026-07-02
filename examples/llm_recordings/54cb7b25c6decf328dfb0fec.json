@@ -1,0 +1,85 @@
+{
+  "response": {
+    "content": {
+      "episode_id": "E003",
+      "number": 3,
+      "title": "The Hidden Evidence",
+      "logline": "Mira links the letter to Rowan's archive cover-up.",
+      "opening_hook": "Mira compares the letter with Rowan's dawn archive move.",
+      "main_conflict": "Mira must confront Rowan without losing the only proof.",
+      "emotional_payoff": "Mira turns the private clue into leverage.",
+      "cliffhanger": "Rowan's archive move reveals a second hidden trail.",
+      "source_ranges": [
+        {
+          "type": "source_based",
+          "source_range": {
+            "chapter_id": "CH001",
+            "start_para": 1,
+            "end_para": 2
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "scene_id": "E003SC001",
+          "title": "archive evidence link",
+          "source_links": [
+            {
+              "type": "source_based",
+              "source_range": {
+                "chapter_id": "CH001",
+                "start_para": 1,
+                "end_para": 2
+              }
+            }
+          ],
+          "beats": [
+            {
+              "beat_id": "E003B001",
+              "summary": "Mira connects the reopened case to Rowan hiding the letter.",
+              "elements": [
+                {
+                  "element_id": "E003EL001",
+                  "type": "action",
+                  "text": "Mira sets the sealed letter beside the archive record of Rowan's dawn move.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 1,
+                        "end_para": 2
+                      }
+                    }
+                  ]
+                },
+                {
+                  "element_id": "E003EL002",
+                  "type": "dialogue",
+                  "speaker_id": "C001",
+                  "text": "You hid the letter because this case can still hurt you.",
+                  "source_links": [
+                    {
+                      "type": "source_based",
+                      "source_range": {
+                        "chapter_id": "CH001",
+                        "start_para": 1,
+                        "end_para": 2
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "usage": {
+      "prompt_tokens": 723,
+      "completion_tokens": 243,
+      "total_tokens": 966
+    }
+  },
+  "fixture": true
+}
